@@ -1,0 +1,110 @@
+{
+  "id": 75,
+  "gridWidth": 6,
+  "gridHeight": 6,
+  "parMoves": 12,
+  "threeStarSec": 29,
+  "twoStarSec": 58,
+  "timeLimitSeconds": 116,
+  "difficulty": "medium",
+  "tiles": [],
+  "blocks": [
+    {
+      "id": "a_1",
+      "x": 3,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_2",
+      "x": 3,
+      "y": 3,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_3",
+      "x": 3,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_4",
+      "x": 3,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_5",
+      "x": 4,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_6",
+      "x": 5,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_7",
+      "x": 4,
+      "y": 3,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_8",
+      "x": 4,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_9",
+      "x": 5,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "left"
+    },
+    {
+      "id": "a_10",
+      "x": 4,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "left"
+    },
+    {
+      "id": "a_11",
+      "x": 2,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "left"
+    },
+    {
+      "id": "a_12",
+      "x": 0,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    }
+  ],
+  "powerUps": []
+}

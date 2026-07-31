@@ -1,0 +1,78 @@
+{
+  "id": 34,
+  "gridWidth": 5,
+  "gridHeight": 5,
+  "parMoves": 8,
+  "threeStarSec": 18,
+  "twoStarSec": 36,
+  "timeLimitSeconds": 72,
+  "difficulty": "easy",
+  "tiles": [],
+  "blocks": [
+    {
+      "id": "a_1",
+      "x": 3,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_2",
+      "x": 3,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_3",
+      "x": 4,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "left"
+    },
+    {
+      "id": "a_4",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_5",
+      "x": 4,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_6",
+      "x": 2,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_7",
+      "x": 0,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_8",
+      "x": 3,
+      "y": 3,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    }
+  ],
+  "powerUps": []
+}

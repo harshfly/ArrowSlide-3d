@@ -1,0 +1,54 @@
+{
+  "id": 10,
+  "gridWidth": 5,
+  "gridHeight": 5,
+  "parMoves": 5,
+  "threeStarSec": 12,
+  "twoStarSec": 24,
+  "timeLimitSeconds": 48,
+  "difficulty": "easy",
+  "tiles": [],
+  "blocks": [
+    {
+      "id": "a_1",
+      "x": 0,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_2",
+      "x": 2,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_3",
+      "x": 3,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_4",
+      "x": 4,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_5",
+      "x": 1,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    }
+  ],
+  "powerUps": []
+}
