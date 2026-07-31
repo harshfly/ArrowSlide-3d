@@ -27,9 +27,12 @@ void _generateLevel(int id) {
   // Progressive scaling
   final t = (id - 1) / 199.0; // 0.0 (level 1) → 1.0 (level 200)
 
-  final size = 5 + (t * 5).floor().clamp(0, 5); // 5→10
-  final targetBlocks = (4 + t * 22).round().clamp(4, 26);
-  final minDepth = (1 + t * 7).round().clamp(1, 8); // dependency chain depth
+  final size = 6 + (t * 4).floor().clamp(0, 4); // 6x6 → 10x10
+  final maxCapacity = size * size;
+  // Massively increase arrow density (2x baseline from previous logic)
+  final fillRatio = 0.45 + (t * 0.45); // 45% dense up to 90% dense
+  final targetBlocks = (maxCapacity * fillRatio).round().clamp(10, 95);
+  final minDepth = (4 + t * 20).round().clamp(4, 25); // deeper dependency chains
 
   String difficulty;
   if (id <= 50) {
