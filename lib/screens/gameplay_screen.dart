@@ -410,6 +410,35 @@ class _GameplayScreenState extends State<GameplayScreen>
             ),
           ),
           const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.timer_outlined, color: GameConfig.textPrimary, size: 20),
+                const SizedBox(width: 4),
+                Text(
+                  _engine.elapsedFormatted,
+                  style: const TextStyle(
+                    color: GameConfig.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
           // Hearts (Lives)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

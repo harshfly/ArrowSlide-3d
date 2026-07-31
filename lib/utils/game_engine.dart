@@ -11,7 +11,7 @@ class GameEngine extends ChangeNotifier {
 
   int _moveCount = 0;
   int _score = 0;
-  int _elapsedSeconds = 0;
+  int _timeRemaining = 0;
   int _lives = 3;
   bool _isWon = false;
   bool _isFailed = false;
@@ -26,7 +26,7 @@ class GameEngine extends ChangeNotifier {
   List<ArrowBlock> get blocks => List.unmodifiable(_blocks);
   int get moveCount => _moveCount;
   int get score => _score;
-  int get elapsedSeconds => _elapsedSeconds;
+  int get timeRemaining => _timeRemaining;
   int get lives => _lives;
   bool get isWon => _isWon;
   bool get isFailed => _isFailed;
@@ -43,8 +43,8 @@ class GameEngine extends ChangeNotifier {
   }
 
   String get elapsedFormatted {
-    final m = (_elapsedSeconds ~/ 60).toString().padLeft(2, '0');
-    final s = (_elapsedSeconds % 60).toString().padLeft(2, '0');
+    final m = (_timeRemaining ~/ 60).toString().padLeft(2, '0');
+    final s = (_timeRemaining % 60).toString().padLeft(2, '0');
     return '$m:$s';
   }
 
@@ -54,7 +54,16 @@ class GameEngine extends ChangeNotifier {
     _blocks = level.blocks.map((b) => b.copyWith()).toList();
     _moveCount = 0;
     _score = 0;
-    _elapsedSeconds = 0;
+    
+    int baseTime = 60;
+    switch(level.difficulty) {
+      case 'Easy': baseTime = 45; break;
+      case 'Medium': baseTime = 90; break;
+      case 'Hard': baseTime = 120; break;
+      case 'Expert': baseTime = 180; break;
+    }
+    _timeRemaining = baseTime;
+
     _lives = 3;
     _isWon = false;
     _isFailed = false;
@@ -70,7 +79,11 @@ class GameEngine extends ChangeNotifier {
     _elapsedTimer?.cancel();
     _elapsedTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!_isPaused && !_isWon && !_isFailed) {
-        _elapsedSeconds++;
+        _timeRemaining--;
+        if (_timeRemaining <= 0) {
+          _isFailed = true;
+          _elapsedTimer?.cancel();
+        }
         notifyListeners();
       }
     });

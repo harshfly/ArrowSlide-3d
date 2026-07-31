@@ -23,8 +23,8 @@ class ArrowBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Make the block size almost as large as cell size to pack them tightly
-    final blockSize = cellSize * 0.95; 
+    // Make the block size a bit smaller than the cell size so they aren't touching
+    final blockSize = cellSize * 0.85;
     final depthY = 8.0;
 
     if (block.isHidden) {

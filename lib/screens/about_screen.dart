@@ -57,7 +57,11 @@ class AboutScreen extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildCubeLogo(),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: 220,
+                        fit: BoxFit.contain,
+                      ),
                       const SizedBox(height: GameConfig.spacingMd),
                       Text(
                         'Version ${GameConfig.appVersion}',
