@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.arrowslide_3d"
+    namespace = "com.arrowslide.game"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.arrowslide_3d"
+        applicationId = "com.arrowslide.game"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

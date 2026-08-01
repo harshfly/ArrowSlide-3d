@@ -1,4 +1,4 @@
-package com.example.arrowslide_3d
+package com.arrowslide.game
 
 import io.flutter.embedding.android.FlutterActivity
 
