@@ -37,15 +37,6 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.monetization_on_rounded,
                     iconColor: GameConfig.accent,
                     value: '${userData.coins}',
-                  ),
-                  const SizedBox(width: 8),
-                  // Gems Pill with + button
-                  _buildCurrencyPill(
-                    icon: Icons.diamond_rounded,
-                    iconColor: Colors.blueAccent,
-                    value: '35',
-                    hasPlus: true,
-                  ),
                 ],
               ),
             ),
@@ -135,33 +126,6 @@ class HomeScreen extends StatelessWidget {
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    // 4. STORE (Yellow/Orange Pill Button)
-                    ClayButton(
-                      color: GameConfig.accent,
-                      depthColor: GameConfig.accentDepth,
-                      onTap: () {
-                        // Navigate to store / hints
-                        Navigator.pushNamed(context, AppRouter.dailyReward);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.shopping_bag_rounded, color: Colors.white, size: 24),
-                          SizedBox(width: 10),
-                          Text(
-                            'STORE',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1.2,
                             ),
                           ),
                         ],
