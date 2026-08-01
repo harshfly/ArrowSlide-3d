@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/level.dart';
+import 'daily_challenge_service.dart';
 
 /// Loads level JSON files from the assets folder.
 class LevelLoader {
@@ -8,6 +9,10 @@ class LevelLoader {
 
   /// Load a single level by ID.
   static Future<Level> loadLevel(int levelId) async {
+    if (levelId == 999) {
+      return DailyChallengeService.getDailyLevel();
+    }
+
     if (_cache.containsKey(levelId)) {
       return _cache[levelId]!;
     }

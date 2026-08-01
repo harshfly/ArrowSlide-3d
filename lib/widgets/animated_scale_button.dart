@@ -36,12 +36,13 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton> with SingleTi
   }
 
   void _onTapDown(TapDownDetails details) {
-    HapticFeedback.lightImpact();
+    HapticFeedback.mediumImpact();
     AudioService.instance.playTap();
     _controller.forward();
   }
 
   void _onTapUp(TapUpDetails details) {
+    HapticFeedback.lightImpact();
     _controller.reverse();
     widget.onTap();
   }

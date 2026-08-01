@@ -34,12 +34,13 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
   bool _isPressed = false;
 
   void _handleTapDown(TapDownDetails details) {
-    HapticFeedback.lightImpact();
+    HapticFeedback.mediumImpact();
     AudioService.instance.playTap();
     setState(() => _isPressed = true);
   }
 
   void _handleTapUp(TapUpDetails details) {
+    HapticFeedback.lightImpact();
     setState(() => _isPressed = false);
     widget.onTap();
   }

@@ -102,7 +102,6 @@ class _GameplayScreenState extends State<GameplayScreen>
       'levelId': widget.levelId,
       'moves': _engine.moveCount,
       'stars': _engine.starRating,
-      'coinsEarned': 20 + (_engine.starRating * 10),
       'bestMoves': _engine.moveCount,
       'elapsedSec': _engine.elapsedSeconds,
     });
@@ -240,6 +239,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _onBlockTapped(ArrowBlock block) {
+    HapticFeedback.lightImpact();
     setState(() => _highlightedBlockId = null);
 
     final success = _engine.moveBlock(block.id);

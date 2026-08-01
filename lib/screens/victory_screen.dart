@@ -104,11 +104,12 @@ class _VictoryScreenState extends State<VictoryScreen>
                   ),
                   const SizedBox(height: 32),
                   // Title
-                  const Text(
-                    'LEVEL CLEARED!',
-                    style: TextStyle(
+                  Text(
+                    widget.levelId == 999 ? 'DAILY CHALLENGE\nCLEARED!' : 'LEVEL CLEARED!',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
                       color: GameConfig.danger,
-                      fontSize: 28,
+                      fontSize: 26,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.2,
                     ),
@@ -142,10 +143,17 @@ class _VictoryScreenState extends State<VictoryScreen>
                   ),
                   const SizedBox(height: 48),
                   AnimatedScaleButton(
-                    onTap: () => Navigator.pushReplacementNamed(
-                      context, AppRouter.gameplay,
-                      arguments: widget.levelId + 1,
-                    ),
+                    onTap: () {
+                      if (widget.levelId == 999) {
+                        Navigator.pushReplacementNamed(context, AppRouter.home);
+                      } else {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRouter.gameplay,
+                          arguments: widget.levelId + 1,
+                        );
+                      }
+                    },
                     child: Container(
                       width: double.infinity,
                       height: 64,
@@ -159,10 +167,10 @@ class _VictoryScreenState extends State<VictoryScreen>
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'NEXT LEVEL',
-                          style: TextStyle(
+                          widget.levelId == 999 ? 'BACK TO HOME' : 'NEXT LEVEL',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.w800,

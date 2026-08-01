@@ -32,8 +32,8 @@ class _SplashScreenState extends State<SplashScreen>
     );
     _floatController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3200),
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 2800),
+    )..repeat();
 
     _fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
@@ -208,74 +208,104 @@ class _SplashScreenState extends State<SplashScreen>
 
   List<Widget> _buildFloatingCubes() {
     return [
-      _positionedCube(
-        top: 90, left: 35, size: 48,
+      _positionedArrow(
+        top: 80, left: 30, size: 54,
         color: GameConfig.primary,
-        rotation: 0.15,
+        direction: 'up',
         offsetPhase: 0.0,
         icon: Icons.arrow_upward_rounded,
       ),
-      _positionedCube(
-        top: 180, right: 45, size: 54,
+      _positionedArrow(
+        top: 160, right: 35, size: 58,
         color: GameConfig.danger,
-        rotation: -0.2,
-        offsetPhase: 1.2,
+        direction: 'right',
+        offsetPhase: 0.15,
         icon: Icons.arrow_forward_rounded,
       ),
-      _positionedCube(
-        bottom: 140, left: 50, size: 62,
+      _positionedArrow(
+        bottom: 150, left: 45, size: 62,
         color: GameConfig.purple,
-        rotation: 0.18,
-        offsetPhase: 2.4,
+        direction: 'down',
+        offsetPhase: 0.30,
         icon: Icons.arrow_downward_rounded,
       ),
-      _positionedCube(
-        bottom: 240, right: 70, size: 42,
+      _positionedArrow(
+        bottom: 230, right: 50, size: 52,
         color: GameConfig.accent,
-        rotation: -0.15,
-        offsetPhase: 3.6,
+        direction: 'left',
+        offsetPhase: 0.45,
         icon: Icons.arrow_back_rounded,
       ),
-      _positionedCube(
-        top: 340, left: 75, size: 50,
+      _positionedArrow(
+        top: 300, left: 75, size: 56,
         color: GameConfig.secondary,
-        rotation: 0.25,
-        offsetPhase: 4.8,
+        direction: 'up',
+        offsetPhase: 0.60,
         icon: Icons.arrow_upward_rounded,
       ),
-      _positionedCube(
-        bottom: 340, right: 35, size: 46,
+      _positionedArrow(
+        bottom: 320, right: 35, size: 54,
         color: GameConfig.primary,
-        rotation: -0.1,
-        offsetPhase: 5.5,
+        direction: 'right',
+        offsetPhase: 0.75,
         icon: Icons.arrow_forward_rounded,
+      ),
+      _positionedArrow(
+        top: 220, left: 140, size: 50,
+        color: GameConfig.warning,
+        direction: 'left',
+        offsetPhase: 0.85,
+        icon: Icons.arrow_back_rounded,
       ),
     ];
   }
 
-  Widget _positionedCube({
+  Widget _positionedArrow({
     double? top, double? bottom, double? left, double? right,
     required double size,
     required Color color,
-    required double rotation,
+    required String direction,
     required double offsetPhase,
     required IconData icon,
   }) {
     return AnimatedBuilder(
       animation: _floatController,
       builder: (context, child) {
-        final floatY = math.sin(_floatController.value * math.pi * 2 + offsetPhase) * 16.0;
-        final floatRot = math.cos(_floatController.value * math.pi * 2 + offsetPhase) * 0.08;
+        final t = (_floatController.value + offsetPhase) % 1.0;
+
+        double dx = 0.0;
+        double dy = 0.0;
+        double opacity = 0.9;
+
+        if (t <= 0.35) {
+          // Bob gently in place before sliding out
+          dy = math.sin(t * math.pi * 4) * 6.0;
+        } else {
+          // Slide rapidly out of the screen along the pointing direction like in-game!
+          final progress = (t - 0.35) / 0.65;
+          final curve = Curves.easeInCubic.transform(progress);
+          final dist = curve * 700.0;
+
+          if (direction == 'up') dy = -dist;
+          if (direction == 'down') dy = dist;
+          if (direction == 'left') dx = -dist;
+          if (direction == 'right') dx = dist;
+
+          if (progress > 0.85) {
+            opacity = 0.9 * (1.0 - (progress - 0.85) / 0.15);
+          }
+        }
+
         return Positioned(
-          top: top != null ? top + floatY : null,
-          bottom: bottom != null ? bottom - floatY : null,
+          top: top,
+          bottom: bottom,
           left: left,
           right: right,
-          child: Transform.rotate(
-            angle: rotation + floatRot,
+          child: Transform.translate(
+            offset: Offset(dx, dy),
             child: Opacity(
-              opacity: 0.75,
-              child: _buildSimpleCube(size, color, icon),
+              opacity: opacity.clamp(0.0, 1.0),
+              child: _buildLevelArrowCube(size, color, icon),
             ),
           ),
         );
@@ -283,33 +313,102 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  Widget _buildSimpleCube(double size, Color color, IconData icon) {
-    final depth = size * 0.2;
+  Widget _buildLevelArrowCube(double size, Color color, IconData icon) {
+    final depthY = size * 0.18;
+    final hsl = HSLColor.fromColor(color);
+    final darkerColor = hsl.withLightness((hsl.lightness * 0.72).clamp(0.0, 1.0)).toColor();
+    final lighterColor = hsl.withLightness((hsl.lightness * 1.15).clamp(0.0, 1.0)).toColor();
+
     return SizedBox(
       width: size,
-      height: size + depth,
+      height: size + depthY,
       child: Stack(
         children: [
-          // Front face
-          Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.45),
-                  blurRadius: 12,
-                  offset: const Offset(0, 5),
-                )
-              ],
+          // Soft drop shadow
+          Positioned(
+            top: depthY + 3,
+            left: 2,
+            right: 2,
+            child: Container(
+              height: size,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.22),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
             ),
-            child: Center(
-              child: Icon(
-                icon,
-                color: Colors.white.withValues(alpha: 0.95),
-                size: size * 0.55,
+          ),
+
+          // 3D Depth Layer (Darker bottom side)
+          Positioned(
+            top: depthY,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: size,
+              decoration: BoxDecoration(
+                color: darkerColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+
+          // Main Face Layer (Gradient Clay Top)
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: size,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    lighterColor,
+                    color,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Stack(
+                children: [
+                  // Glossy top inner sheen highlight
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: size * 0.42,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(16),
+                        ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.32),
+                            Colors.white.withValues(alpha: 0.0),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Direction Arrow Icon
+                  Center(
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: size * 0.55,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

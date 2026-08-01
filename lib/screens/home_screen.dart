@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../config.dart';
 import '../utils/app_router.dart';
@@ -8,8 +9,41 @@ import '../widgets/dotted_background.dart';
 import '../widgets/clay_button.dart';
 import '../widgets/animated_scale_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _logoController;
+  late Animation<double> _logoScale;
+  late Animation<Offset> _logoFloat;
+
+  @override
+  void initState() {
+    super.initState();
+    _logoController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2400),
+    )..repeat(reverse: true);
+
+    _logoScale = Tween<double>(begin: 0.94, end: 1.06).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeInOutSine),
+    );
+
+    _logoFloat = Tween<Offset>(begin: const Offset(0, -6), end: const Offset(0, 6)).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeInOutSine),
+    );
+  }
+
+  @override
+  void dispose() {
+    _logoController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +66,8 @@ class HomeScreen extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, AppRouter.settings),
                   ),
                   const Spacer(),
-                  // Coins Pill
-                  _buildCurrencyPill(
-                    icon: Icons.monetization_on_rounded,
-                    iconColor: GameConfig.accent,
-                    value: '${userData.coins}',
-                  ),
+                  // Level Badge
+                  _buildLevelBadge(level: currentLevel),
                 ],
               ),
             ),
@@ -48,11 +78,22 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(height: 8),
-                    // Logo Image
-                    Image.asset(
-                      'assets/images/logo.png',
-                      height: 160,
-                      fit: BoxFit.contain,
+                    // 3D Animated Logo (Pops slowly for an immersive feel without blue background box)
+                    AnimatedBuilder(
+                      animation: _logoController,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: _logoFloat.value,
+                          child: Transform.scale(
+                            scale: _logoScale.value,
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              height: 170,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 24),
 
@@ -114,7 +155,14 @@ class HomeScreen extends StatelessWidget {
                     ClayButton(
                       color: GameConfig.danger,
                       depthColor: GameConfig.dangerDepth,
-                      onTap: () => Navigator.pushNamed(context, AppRouter.dailyReward),
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        Navigator.pushNamed(
+                          context,
+                          AppRouter.gameplay,
+                          arguments: 999,
+                        );
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: const [
@@ -213,12 +261,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCurrencyPill({
-    required IconData icon,
-    required Color iconColor,
-    required String value,
-    bool hasPlus = false,
-  }) {
+  Widget _buildLevelBadge({required int level}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
@@ -235,7 +278,7 @@ class HomeScreen extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
           BoxShadow(
-            color: iconColor.withValues(alpha: 0.12),
+            color: GameConfig.warning.withValues(alpha: 0.15),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -244,39 +287,17 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: iconColor, size: 20),
+          const Icon(Icons.star_rounded, color: GameConfig.warning, size: 20),
           const SizedBox(width: 8),
           Text(
-            value,
+            'LEVEL $level',
             style: const TextStyle(
               color: GameConfig.textPrimary,
               fontWeight: FontWeight.w900,
               fontSize: 15,
-              letterSpacing: 0.3,
+              letterSpacing: 0.5,
             ),
           ),
-          if (hasPlus) ...[
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [GameConfig.secondary, GameConfig.secondaryDepth],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: GameConfig.secondary.withValues(alpha: 0.3),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.add_rounded, color: Colors.white, size: 14),
-            ),
-          ],
         ],
       ),
     );
