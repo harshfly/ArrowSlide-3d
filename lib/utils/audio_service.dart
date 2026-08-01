@@ -1,13 +1,14 @@
 import 'package:flutter/services.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../config.dart';
 
-/// Audio service — whoosh.mp3 slide sound via SystemSound fallback.
-/// For real audio playback, audioplayers would be added when path-space issues are resolved.
+/// Audio service — whoosh.mp3 slide sound via audioplayers with SystemSound fallback.
 class AudioService {
   static AudioService? _instance;
   bool _musicEnabled = GameConfig.defaultMusicEnabled;
   bool _soundEnabled = GameConfig.defaultSoundEnabled;
   bool _initialized = false;
+  AudioPlayer? _slidePlayer;
 
   AudioService._();
 
@@ -35,8 +36,13 @@ class AudioService {
   /// Play the whoosh slide sound
   Future<void> playSlideSound() async {
     if (!_soundEnabled || !_initialized) return;
-    // Fallback: SystemSound click
-    SystemSound.play(SystemSoundType.click);
+    try {
+      _slidePlayer ??= AudioPlayer();
+      await _slidePlayer!.stop();
+      await _slidePlayer!.play(AssetSource('audio/whoosh-sfx.mp3'), mode: PlayerMode.lowLatency);
+    } catch (e) {
+      SystemSound.play(SystemSoundType.click);
+    }
   }
 
   Future<void> playWinSound() async {

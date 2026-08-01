@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../config.dart';
@@ -14,8 +15,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _controller;
+  late AnimationController _floatController;
   late Animation<double> _fadeIn;
   late Animation<double> _scale;
 
@@ -28,6 +30,11 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 2000),
     );
+    _floatController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3200),
+    )..repeat(reverse: true);
+
     _fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
     );
@@ -87,6 +94,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    _floatController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -97,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: GameConfig.backgroundDark,
       body: Stack(
         children: [
-          // Background floating cubes
+          // Background animated floating arrows
           ..._buildFloatingCubes(),
           
           Center(
@@ -199,37 +207,86 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   List<Widget> _buildFloatingCubes() {
-    // Generate some static floating cubes in the background for effect
-    // In a full implementation, these would use an AnimationController for slow bobbing
     return [
-      _positionedCube(top: 100, left: 40, size: 40, color: GameConfig.primary, rotation: 0.2),
-      _positionedCube(top: 200, right: 50, size: 50, color: GameConfig.danger, rotation: -0.15),
-      _positionedCube(bottom: 150, left: 60, size: 60, color: GameConfig.purple, rotation: 0.1),
-      _positionedCube(bottom: 250, right: 80, size: 35, color: GameConfig.accent, rotation: -0.2),
-      _positionedCube(top: 350, left: 80, size: 45, color: GameConfig.secondary, rotation: 0.3),
+      _positionedCube(
+        top: 90, left: 35, size: 48,
+        color: GameConfig.primary,
+        rotation: 0.15,
+        offsetPhase: 0.0,
+        icon: Icons.arrow_upward_rounded,
+      ),
+      _positionedCube(
+        top: 180, right: 45, size: 54,
+        color: GameConfig.danger,
+        rotation: -0.2,
+        offsetPhase: 1.2,
+        icon: Icons.arrow_forward_rounded,
+      ),
+      _positionedCube(
+        bottom: 140, left: 50, size: 62,
+        color: GameConfig.purple,
+        rotation: 0.18,
+        offsetPhase: 2.4,
+        icon: Icons.arrow_downward_rounded,
+      ),
+      _positionedCube(
+        bottom: 240, right: 70, size: 42,
+        color: GameConfig.accent,
+        rotation: -0.15,
+        offsetPhase: 3.6,
+        icon: Icons.arrow_back_rounded,
+      ),
+      _positionedCube(
+        top: 340, left: 75, size: 50,
+        color: GameConfig.secondary,
+        rotation: 0.25,
+        offsetPhase: 4.8,
+        icon: Icons.arrow_upward_rounded,
+      ),
+      _positionedCube(
+        bottom: 340, right: 35, size: 46,
+        color: GameConfig.primary,
+        rotation: -0.1,
+        offsetPhase: 5.5,
+        icon: Icons.arrow_forward_rounded,
+      ),
     ];
   }
 
   Widget _positionedCube({
     double? top, double? bottom, double? left, double? right,
-    required double size, required Color color, required double rotation
+    required double size,
+    required Color color,
+    required double rotation,
+    required double offsetPhase,
+    required IconData icon,
   }) {
-    return Positioned(
-      top: top, bottom: bottom, left: left, right: right,
-      child: Transform.rotate(
-        angle: rotation,
-        child: Opacity(
-          opacity: 0.6,
-          child: _buildSimpleCube(size, color),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _floatController,
+      builder: (context, child) {
+        final floatY = math.sin(_floatController.value * math.pi * 2 + offsetPhase) * 16.0;
+        final floatRot = math.cos(_floatController.value * math.pi * 2 + offsetPhase) * 0.08;
+        return Positioned(
+          top: top != null ? top + floatY : null,
+          bottom: bottom != null ? bottom - floatY : null,
+          left: left,
+          right: right,
+          child: Transform.rotate(
+            angle: rotation + floatRot,
+            child: Opacity(
+              opacity: 0.75,
+              child: _buildSimpleCube(size, color, icon),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildSimpleCube(double size, Color color) {
-    final depth = size * 0.15;
+  Widget _buildSimpleCube(double size, Color color, IconData icon) {
+    final depth = size * 0.2;
     return SizedBox(
-      width: size + depth,
+      width: size,
       height: size + depth,
       child: Stack(
         children: [
@@ -239,20 +296,20 @@ class _SplashScreenState extends State<SplashScreen>
             height: size,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: color.withValues(alpha: 0.4),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: color.withValues(alpha: 0.45),
+                  blurRadius: 12,
+                  offset: const Offset(0, 5),
                 )
               ],
             ),
             child: Center(
               child: Icon(
-                Icons.arrow_upward_rounded,
-                color: Colors.white.withValues(alpha: 0.8),
-                size: size * 0.5,
+                icon,
+                color: Colors.white.withValues(alpha: 0.95),
+                size: size * 0.55,
               ),
             ),
           ),

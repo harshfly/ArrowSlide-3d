@@ -54,22 +54,22 @@ class GameConfig {
   static const Color surfaceLight = Colors.white;
 
   // ─── Brand Palette (Exact Claymorphism Tokens) ────────────────────────────────────────
-  static const Color primary = Color(0xFF4FA2FF);       // Play Blue (#4FA2FF -> #2E7CF6)
-  static const Color primaryDepth = Color(0xFF2E7CF6);  
+  static const Color primary = Color(0xFF1E65F3);       // Play Blue (Deep Logo Royal Blue)
+  static const Color primaryDepth = Color(0xFF0C46BC);  
   
-  static const Color secondary = Color(0xFF38D99D);     // Green (#38D99D -> #23C182)
-  static const Color secondaryDepth = Color(0xFF23C182);
+  static const Color secondary = Color(0xFF0EBA6F);     // Green (Deep Emerald Green)
+  static const Color secondaryDepth = Color(0xFF07824B);
   
-  static const Color accent = Color(0xFFF7B521);        // Orange (#F7B521 -> #D99110)
-  static const Color accentDepth = Color(0xFFD99110);   
+  static const Color accent = Color(0xFFED8A00);        // Orange (Deep Vibrant Orange)
+  static const Color accentDepth = Color(0xFFAB6000);   
   
-  static const Color danger = Color(0xFFFF7A8B);        // Coral (#FF7A8B -> #FF566C)
-  static const Color dangerDepth = Color(0xFFFF566C);   
+  static const Color danger = Color(0xFFE83D58);        // Coral (Deep Crimson Coral)
+  static const Color dangerDepth = Color(0xFFA61F35);   
 
-  static const Color error = Color(0xFFFF7A8B);
-  static const Color orange = Color(0xFFF7B521);
-  static const Color purple = Color(0xFFD355FF);        
-  static const Color purpleDepth = Color(0xFFA033D2);
+  static const Color error = Color(0xFFE83D58);
+  static const Color orange = Color(0xFFED8A00);
+  static const Color purple = Color(0xFF9623E0);        
+  static const Color purpleDepth = Color(0xFF67109E);
 
   // Text Colors
   static const Color textPrimary = Color(0xFF1F2430);      
@@ -84,17 +84,17 @@ class GameConfig {
   static const Color starsColor = accent;       
 
   // ─── Arrow Cube Color Palette ──────────────────────────────────────────
-  static const Color cubeBlue = Color(0xFF4A95FF);
-  static const Color cubeBlueSide = Color(0xFF2F6ED9);
+  static const Color cubeBlue = Color(0xFF1E65F3);
+  static const Color cubeBlueSide = Color(0xFF0C46BC);
   
-  static const Color cubeRed = Color(0xFFFF6268);
-  static const Color cubeRedSide = Color(0xFFD9444C);
+  static const Color cubeRed = Color(0xFFE83D58);
+  static const Color cubeRedSide = Color(0xFFA61F35);
   
-  static const Color cubeGreen = Color(0xFF38D99D);
-  static const Color cubeGreenSide = Color(0xFF20B97D);
+  static const Color cubeGreen = Color(0xFF0EBA6F);
+  static const Color cubeGreenSide = Color(0xFF07824B);
   
-  static const Color cubeYellow = Color(0xFFF7B521);
-  static const Color cubeYellowSide = Color(0xFFD99110);
+  static const Color cubeYellow = Color(0xFFED8A00);
+  static const Color cubeYellowSide = Color(0xFFAB6000);
   
   static const Color cubePurple = purple;
   static const Color cubePurpleSide = purpleDepth;
