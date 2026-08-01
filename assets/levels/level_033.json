@@ -2,7 +2,7 @@
   "id": 33,
   "gridWidth": 6,
   "gridHeight": 6,
-  "parMoves": 19,
+  "parMoves": 18,
   "threeStarSec": 18,
   "twoStarSec": 36,
   "timeLimitSeconds": 72,
@@ -11,88 +11,88 @@
   "blocks": [
     {
       "id": "a_1",
-      "x": 0,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_2",
-      "x": 3,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_3",
-      "x": 5,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_4",
       "x": 4,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_5",
-      "x": 1,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_6",
-      "x": 2,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_7",
-      "x": 3,
-      "y": 1,
+      "y": 2,
       "width": 1,
       "height": 1,
       "direction": "left"
     },
     {
-      "id": "a_8",
-      "x": 3,
+      "id": "a_2",
+      "x": 1,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "left"
+    },
+    {
+      "id": "a_3",
+      "x": 0,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_4",
+      "x": 0,
       "y": 0,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
-      "id": "a_9",
+      "id": "a_5",
       "x": 0,
-      "y": 3,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_6",
+      "x": 4,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_7",
+      "x": 3,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_8",
+      "x": 1,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_9",
+      "x": 5,
+      "y": 1,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
       "id": "a_10",
-      "x": 0,
-      "y": 4,
+      "x": 1,
+      "y": 0,
       "width": 1,
       "height": 1,
-      "direction": "right"
+      "direction": "up"
     },
     {
       "id": "a_11",
       "x": 2,
-      "y": 1,
+      "y": 2,
       "width": 1,
       "height": 1,
       "direction": "up"
@@ -100,62 +100,54 @@
     {
       "id": "a_12",
       "x": 2,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_13",
-      "x": 0,
       "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_14",
-      "x": 1,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_15",
-      "x": 4,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_16",
-      "x": 5,
-      "y": 2,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_17",
-      "x": 4,
-      "y": 4,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
-      "id": "a_18",
+      "id": "a_13",
+      "x": 3,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_14",
+      "x": 5,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_15",
       "x": 2,
       "y": 0,
       "width": 1,
       "height": 1,
-      "direction": "right"
+      "direction": "up"
     },
     {
-      "id": "a_19",
-      "x": 4,
+      "id": "a_16",
+      "x": 3,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
+      "id": "a_17",
+      "x": 2,
+      "y": 3,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_18",
+      "x": 1,
       "y": 3,
       "width": 1,
       "height": 1,

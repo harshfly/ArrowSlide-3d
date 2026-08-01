@@ -24,15 +24,27 @@ void main() {
 }
 
 void _generateLevel(int id) {
-  // Progressive scaling
   final t = (id - 1) / 199.0; // 0.0 (level 1) → 1.0 (level 200)
 
-  final size = 6 + (t * 4).floor().clamp(0, 4); // 6x6 → 10x10
-  final maxCapacity = size * size;
-  // Massively increase arrow density (2x baseline from previous logic)
-  final fillRatio = 0.45 + (t * 0.45); // 45% dense up to 90% dense
-  final targetBlocks = (maxCapacity * fillRatio).round().clamp(10, 95);
-  final minDepth = (4 + t * 20).round().clamp(4, 25); // deeper dependency chains
+  int size;
+  int targetBlocks;
+  int minDepth;
+
+  if (id <= 15) {
+    // Easy onboarding curve for levels 1 to 15
+    final onboardingT = (id - 1) / 14.0; // 0.0 → 1.0
+    size = id <= 5 ? 4 : 5; // 4x4 for L1-L5, 5x5 for L6-L15
+    targetBlocks = (4 + onboardingT * 8).round().clamp(4, 12);
+    minDepth = (1 + onboardingT * 2).round().clamp(1, 3);
+  } else {
+    // Hardcore progressive scaling for levels 16 to 200
+    final t = (id - 16) / 184.0; // 0.0 → 1.0
+    size = 6 + (t * 4).floor().clamp(0, 4); // 6x6 → 10x10
+    final maxCapacity = size * size;
+    final fillRatio = 0.45 + (t * 0.45); // 45% to 90%
+    targetBlocks = (maxCapacity * fillRatio).round().clamp(14, 95);
+    minDepth = (4 + t * 20).round().clamp(4, 25);
+  }
 
   String difficulty;
   if (id <= 50) {

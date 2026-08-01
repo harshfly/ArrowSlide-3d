@@ -1,8 +1,8 @@
 {
   "id": 10,
-  "gridWidth": 6,
-  "gridHeight": 6,
-  "parMoves": 17,
+  "gridWidth": 5,
+  "gridHeight": 5,
+  "parMoves": 9,
   "threeStarSec": 12,
   "twoStarSec": 24,
   "timeLimitSeconds": 48,
@@ -12,31 +12,31 @@
     {
       "id": "a_1",
       "x": 4,
-      "y": 2,
+      "y": 4,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "up"
     },
     {
       "id": "a_2",
       "x": 4,
-      "y": 4,
+      "y": 3,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "up"
     },
     {
       "id": "a_3",
-      "x": 3,
-      "y": 4,
+      "x": 4,
+      "y": 0,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "up"
     },
     {
       "id": "a_4",
       "x": 4,
-      "y": 5,
+      "y": 2,
       "width": 1,
       "height": 1,
       "direction": "left"
@@ -44,106 +44,42 @@
     {
       "id": "a_5",
       "x": 1,
-      "y": 4,
+      "y": 2,
       "width": 1,
       "height": 1,
-      "direction": "up"
+      "direction": "down"
     },
     {
       "id": "a_6",
       "x": 4,
-      "y": 3,
+      "y": 1,
       "width": 1,
       "height": 1,
       "direction": "left"
     },
     {
       "id": "a_7",
-      "x": 2,
-      "y": 4,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_8",
-      "x": 2,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_9",
-      "x": 0,
-      "y": 4,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_10",
-      "x": 0,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_11",
-      "x": 1,
+      "x": 3,
       "y": 2,
       "width": 1,
       "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_12",
-      "x": 1,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_13",
-      "x": 1,
-      "y": 5,
-      "width": 1,
-      "height": 1,
       "direction": "left"
     },
     {
-      "id": "a_14",
-      "x": 0,
-      "y": 5,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_15",
-      "x": 1,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_16",
-      "x": 0,
+      "id": "a_8",
+      "x": 3,
       "y": 1,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
-      "id": "a_17",
-      "x": 0,
-      "y": 0,
+      "id": "a_9",
+      "x": 1,
+      "y": 1,
       "width": 1,
       "height": 1,
-      "direction": "up"
+      "direction": "left"
     }
   ],
   "powerUps": []

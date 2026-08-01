@@ -1,8 +1,8 @@
 {
   "id": 5,
-  "gridWidth": 6,
-  "gridHeight": 6,
-  "parMoves": 17,
+  "gridWidth": 4,
+  "gridHeight": 4,
+  "parMoves": 6,
   "threeStarSec": 11,
   "twoStarSec": 22,
   "timeLimitSeconds": 44,
@@ -11,139 +11,51 @@
   "blocks": [
     {
       "id": "a_1",
-      "x": 1,
-      "y": 1,
+      "x": 0,
+      "y": 3,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "up"
     },
     {
       "id": "a_2",
-      "x": 1,
-      "y": 5,
+      "x": 0,
+      "y": 2,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "left"
     },
     {
       "id": "a_3",
-      "x": 1,
-      "y": 2,
+      "x": 0,
+      "y": 1,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "up"
     },
     {
       "id": "a_4",
-      "x": 1,
-      "y": 4,
+      "x": 0,
+      "y": 0,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "up"
     },
     {
       "id": "a_5",
-      "x": 1,
-      "y": 3,
+      "x": 3,
+      "y": 2,
       "width": 1,
       "height": 1,
-      "direction": "right"
+      "direction": "up"
     },
     {
       "id": "a_6",
-      "x": 0,
-      "y": 4,
+      "x": 2,
+      "y": 2,
       "width": 1,
       "height": 1,
       "direction": "left"
-    },
-    {
-      "id": "a_7",
-      "x": 3,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_8",
-      "x": 3,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_9",
-      "x": 4,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_10",
-      "x": 5,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_11",
-      "x": 2,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_12",
-      "x": 5,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_13",
-      "x": 3,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_14",
-      "x": 2,
-      "y": 2,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_15",
-      "x": 3,
-      "y": 2,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_16",
-      "x": 4,
-      "y": 2,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_17",
-      "x": 5,
-      "y": 2,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
     }
   ],
   "powerUps": []

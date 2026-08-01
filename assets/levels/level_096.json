@@ -2,7 +2,7 @@
   "id": 96,
   "gridWidth": 7,
   "gridHeight": 7,
-  "parMoves": 33,
+  "parMoves": 32,
   "threeStarSec": 34,
   "twoStarSec": 68,
   "timeLimitSeconds": 136,
@@ -11,24 +11,24 @@
   "blocks": [
     {
       "id": "a_1",
-      "x": 5,
+      "x": 0,
       "y": 1,
       "width": 1,
       "height": 1,
-      "direction": "up"
+      "direction": "down"
     },
     {
       "id": "a_2",
-      "x": 5,
-      "y": 0,
+      "x": 0,
+      "y": 5,
       "width": 1,
       "height": 1,
-      "direction": "up"
+      "direction": "right"
     },
     {
       "id": "a_3",
-      "x": 6,
-      "y": 5,
+      "x": 0,
+      "y": 3,
       "width": 1,
       "height": 1,
       "direction": "left"
@@ -36,63 +36,63 @@
     {
       "id": "a_4",
       "x": 2,
-      "y": 0,
+      "y": 5,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "down"
     },
     {
       "id": "a_5",
-      "x": 1,
-      "y": 3,
+      "x": 0,
+      "y": 4,
       "width": 1,
       "height": 1,
-      "direction": "up"
+      "direction": "right"
     },
     {
       "id": "a_6",
       "x": 2,
-      "y": 4,
+      "y": 6,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "right"
     },
     {
       "id": "a_7",
-      "x": 5,
-      "y": 5,
+      "x": 1,
+      "y": 4,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
       "id": "a_8",
-      "x": 6,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_9",
-      "x": 5,
-      "y": 4,
+      "x": 3,
+      "y": 5,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
+      "id": "a_9",
+      "x": 4,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
       "id": "a_10",
-      "x": 2,
-      "y": 6,
+      "x": 1,
+      "y": 5,
       "width": 1,
       "height": 1,
       "direction": "down"
     },
     {
       "id": "a_11",
-      "x": 3,
-      "y": 0,
+      "x": 5,
+      "y": 4,
       "width": 1,
       "height": 1,
       "direction": "down"
@@ -100,54 +100,54 @@
     {
       "id": "a_12",
       "x": 1,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_13",
-      "x": 5,
-      "y": 6,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_14",
-      "x": 0,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_15",
-      "x": 3,
-      "y": 6,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_16",
-      "x": 4,
-      "y": 5,
+      "y": 2,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
-      "id": "a_17",
-      "x": 2,
+      "id": "a_13",
+      "x": 4,
+      "y": 5,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_14",
+      "x": 4,
+      "y": 6,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_15",
+      "x": 6,
+      "y": 4,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_16",
+      "x": 1,
       "y": 1,
       "width": 1,
       "height": 1,
       "direction": "right"
     },
     {
+      "id": "a_17",
+      "x": 3,
+      "y": 2,
+      "width": 1,
+      "height": 1,
+      "direction": "up"
+    },
+    {
       "id": "a_18",
-      "x": 6,
+      "x": 1,
       "y": 0,
       "width": 1,
       "height": 1,
@@ -155,47 +155,47 @@
     },
     {
       "id": "a_19",
-      "x": 6,
-      "y": 6,
+      "x": 3,
+      "y": 4,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "up"
     },
     {
       "id": "a_20",
-      "x": 6,
-      "y": 2,
+      "x": 3,
+      "y": 0,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "up"
     },
     {
       "id": "a_21",
-      "x": 0,
-      "y": 3,
+      "x": 2,
+      "y": 4,
       "width": 1,
       "height": 1,
-      "direction": "right"
+      "direction": "up"
     },
     {
       "id": "a_22",
-      "x": 4,
-      "y": 2,
+      "x": 0,
+      "y": 0,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
       "id": "a_23",
-      "x": 1,
-      "y": 6,
+      "x": 5,
+      "y": 5,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "right"
     },
     {
       "id": "a_24",
-      "x": 4,
+      "x": 2,
       "y": 1,
       "width": 1,
       "height": 1,
@@ -203,14 +203,22 @@
     },
     {
       "id": "a_25",
-      "x": 0,
-      "y": 1,
+      "x": 1,
+      "y": 3,
       "width": 1,
       "height": 1,
       "direction": "right"
     },
     {
       "id": "a_26",
+      "x": 6,
+      "y": 6,
+      "width": 1,
+      "height": 1,
+      "direction": "right"
+    },
+    {
+      "id": "a_27",
       "x": 3,
       "y": 1,
       "width": 1,
@@ -218,23 +226,7 @@
       "direction": "right"
     },
     {
-      "id": "a_27",
-      "x": 4,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
       "id": "a_28",
-      "x": 1,
-      "y": 4,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_29",
       "x": 0,
       "y": 2,
       "width": 1,
@@ -242,36 +234,36 @@
       "direction": "left"
     },
     {
-      "id": "a_30",
+      "id": "a_29",
       "x": 5,
-      "y": 2,
+      "y": 6,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_30",
+      "x": 6,
+      "y": 1,
       "width": 1,
       "height": 1,
       "direction": "up"
     },
     {
       "id": "a_31",
-      "x": 6,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_32",
-      "x": 4,
-      "y": 4,
+      "x": 0,
+      "y": 6,
       "width": 1,
       "height": 1,
       "direction": "left"
     },
     {
-      "id": "a_33",
-      "x": 4,
-      "y": 6,
+      "id": "a_32",
+      "x": 3,
+      "y": 3,
       "width": 1,
       "height": 1,
-      "direction": "down"
+      "direction": "right"
     }
   ],
   "powerUps": []
