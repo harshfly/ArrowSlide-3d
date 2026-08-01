@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../utils/audio_service.dart';
 
 class AnimatedScaleButton extends StatefulWidget {
   final Widget child;
@@ -34,6 +36,8 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton> with SingleTi
   }
 
   void _onTapDown(TapDownDetails details) {
+    HapticFeedback.lightImpact();
+    AudioService.instance.playTap();
     _controller.forward();
   }
 

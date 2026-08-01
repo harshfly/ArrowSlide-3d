@@ -245,15 +245,16 @@ class _GameplayScreenState extends State<GameplayScreen>
     final success = _engine.moveBlock(block.id);
     if (success) {
       AudioService.instance.playSlideSound();
-      HapticFeedback.lightImpact();
+      HapticFeedback.mediumImpact();
       // Block removal/animation is handled internally by GameEngine
       if (_engine.isWon) {
         AudioService.instance.playWinSound();
+        HapticFeedback.heavyImpact();
         _onLevelWon();
       }
     } else {
       AudioService.instance.playTap();
-      HapticFeedback.mediumImpact();
+      HapticFeedback.heavyImpact();
     }
   }
 
@@ -325,27 +326,28 @@ class _GameplayScreenState extends State<GameplayScreen>
           child: Column(
             children: [
               _buildTopBar(storage),
-            Expanded(
-              child: AnimatedBuilder(
-                animation: _engine,
-                builder: (context, _) => Column(
+              Expanded(
+                child: Column(
                   children: [
                     Expanded(
                       child: AnimatedBuilder(
-                        animation: _shakeAnim,
-                        builder: (context, child) => Transform.translate(
-                          offset: Offset(_shakeAnim.value, 0),
-                          child: child,
-                        ),
-                        child: InteractiveViewer(
-                          panEnabled: true,
-                          scaleEnabled: true,
-                          minScale: 0.5,
-                          maxScale: 3.0,
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: _buildPuzzleArea(),
+                        animation: _engine,
+                        builder: (context, _) => AnimatedBuilder(
+                          animation: _shakeAnim,
+                          builder: (context, child) => Transform.translate(
+                            offset: Offset(_shakeAnim.value, 0),
+                            child: child,
+                          ),
+                          child: InteractiveViewer(
+                            panEnabled: true,
+                            scaleEnabled: true,
+                            minScale: 0.5,
+                            maxScale: 3.0,
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: _buildPuzzleArea(),
+                              ),
                             ),
                           ),
                         ),
@@ -357,105 +359,122 @@ class _GameplayScreenState extends State<GameplayScreen>
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }
 
   Widget _buildTopBar(StorageService storage) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          // Back Button
-          AnimatedScaleButton(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+          // Centered Title & Timer on the centre downside of the level no
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'LEVEL ${widget.levelId}',
+                style: const TextStyle(
+                  color: GameConfig.textPrimary,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                ),
               ),
-              child: const Icon(Icons.arrow_back, color: GameConfig.textPrimary, size: 24),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Level Title
-          Text('LEVEL ${widget.levelId}',
-            style: const TextStyle(
-              color: GameConfig.textPrimary,
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -0.5,
-            ),
-          ),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.timer_outlined, color: GameConfig.textPrimary, size: 20),
-                const SizedBox(width: 4),
-                Text(
-                  _engine.elapsedFormatted,
-                  style: const TextStyle(
-                    color: GameConfig.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
+              const SizedBox(height: 4),
+              AnimatedBuilder(
+                animation: _engine,
+                builder: (context, _) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.timer_outlined, color: GameConfig.primary, size: 15),
+                      const SizedBox(width: 4),
+                      Text(
+                        _engine.elapsedFormatted,
+                        style: const TextStyle(
+                          color: GameConfig.textPrimary,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          // Hearts (Lives)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Row(
-              children: List.generate(3, (index) {
-                final hasLife = index < _engine.lives;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: Icon(
-                    hasLife ? Icons.favorite_rounded : Icons.heart_broken_rounded,
-                    color: hasLife ? GameConfig.danger : GameConfig.textMuted.withValues(alpha: 0.3),
-                    size: 20,
+          // Left & Right Controls
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Back Button
+              AnimatedScaleButton(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                );
-              }),
-            ),
+                  child: const Icon(Icons.arrow_back, color: GameConfig.textPrimary, size: 22),
+                ),
+              ),
+              // Hearts (Lives)
+              AnimatedBuilder(
+                animation: _engine,
+                builder: (context, _) => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: List.generate(3, (index) {
+                      final hasLife = index < _engine.lives;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Icon(
+                          hasLife ? Icons.favorite_rounded : Icons.heart_broken_rounded,
+                          color: hasLife ? GameConfig.danger : GameConfig.textMuted.withValues(alpha: 0.3),
+                          size: 20,
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -494,11 +513,13 @@ class _GameplayScreenState extends State<GameplayScreen>
               curve: GameConfig.blockSlideCurve,
               left: block.x * cellSize,
               top: block.y * cellSize,
-              child: ArrowBlockWidget(
-                block: block,
-                cellSize: cellSize,
-                isHighlighted: _highlightedBlockId == block.id,
-                onTap: () => _onBlockTapped(block),
+              child: RepaintBoundary(
+                child: ArrowBlockWidget(
+                  block: block,
+                  cellSize: cellSize,
+                  isHighlighted: _highlightedBlockId == block.id,
+                  onTap: () => _onBlockTapped(block),
+                ),
               ),
             );
           }),
