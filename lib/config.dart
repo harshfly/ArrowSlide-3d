@@ -25,9 +25,12 @@ class GameConfig {
   static const String rewardedAdId = 'ca-app-pub-3940256099942544/5224354917';
 
   // ─── Ad Behavior ──────────────────────────────────────────────────────
-  static const int interstitialFrequency = 3;
+  static const int interstitialFrequency = 3;  // Show interstitial every N completed levels
+  static const int retryAdFrequency = 2;       // Show interstitial every N retries
+  static const bool hintRequiresAd = true;     // Hints ONLY available after watching rewarded ad
   static const bool showBannerOnHome = true;
   static const bool showBannerOnLevelSelect = true;
+  static const bool showBannerOnGameplay = false;
   static const bool showBannerOnVictory = true;
 
   // ─── Levels ───────────────────────────────────────────────────────────

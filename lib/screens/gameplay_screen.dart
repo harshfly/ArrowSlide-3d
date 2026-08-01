@@ -29,6 +29,7 @@ class _GameplayScreenState extends State<GameplayScreen>
   bool _isLoading = true;
   String? _error;
   String? _highlightedBlockId;
+  int _retryCount = 0;
 
 
   // Shake animation
@@ -254,33 +255,14 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _showHint() async {
-    final storage = Provider.of<StorageService>(context, listen: false);
-    bool shouldShow = false;
-
-    if (storage.userData.hints > 0) {
-      await storage.useHint();
-      shouldShow = true;
-    } else {
-      final rewarded = await AdService.instance.showHintAd();
-      if (rewarded) {
-        shouldShow = true;
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Failed to load Ad. Try again later!'),
-            backgroundColor: GameConfig.danger,
-          ));
-        }
-      }
-    }
-
-    if (shouldShow && mounted) {
-      final movable =
-          _engine.blocks.where((b) => _engine.canBlockMove(b)).toList();
-      if (movable.isNotEmpty) {
-        final hintBlock = movable.first;
-        setState(() => _highlightedBlockId = hintBlock.id);
-        if (mounted) {
+    // Hints always require watching a rewarded ad
+    final rewarded = await AdService.instance.showHintAd();
+    if (rewarded && mounted) {
+      final hintBlockId = _engine.getHintBlockId();
+      if (hintBlockId != null) {
+        setState(() => _highlightedBlockId = hintBlockId);
+        final hintBlock = _engine.blocks.where((b) => b.id == hintBlockId).firstOrNull;
+        if (hintBlock != null && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
                 '💡 Tap the ${hintBlock.direction.name.toUpperCase()} arrow!'),
@@ -289,6 +271,11 @@ class _GameplayScreenState extends State<GameplayScreen>
           ));
         }
       }
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Watch an ad to get a hint!'),
+        backgroundColor: GameConfig.danger,
+      ));
     }
   }
 
@@ -518,9 +505,6 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   Widget _buildBottomToolbar() {
-    final storage = Provider.of<StorageService>(context);
-    final hintsCount = storage.userData.hints;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
       child: Row(
@@ -531,25 +515,37 @@ class _GameplayScreenState extends State<GameplayScreen>
             color: GameConfig.warning,
             label: 'UNDO',
             onTap: () {
-              // TODO: Implement undo logic in GameEngine if desired
+              if (_engine.canUndo) {
+                setState(() {
+                  _engine.undo();
+                  _highlightedBlockId = null;
+                });
+              }
             },
           ),
           _buildToolbarButton(
             icon: Icons.refresh_rounded,
             color: GameConfig.primary,
             label: 'RESTART',
-            onTap: () {
-              setState(() {
-                _engine.restart();
-                _highlightedBlockId = null;
-              });
+            onTap: () async {
+              _retryCount++;
+              // Show interstitial on every N retries
+              if (_retryCount % GameConfig.retryAdFrequency == 0) {
+                await AdService.instance.showInterstitialAd();
+              }
+              if (mounted) {
+                setState(() {
+                  _engine.restart();
+                  _highlightedBlockId = null;
+                });
+              }
             },
           ),
           _buildToolbarButton(
             icon: Icons.lightbulb_outline_rounded,
             color: GameConfig.warning,
             label: 'HINT',
-            badge: hintsCount > 0 ? hintsCount.toString() : '+',
+            badge: '▶',
             onTap: _showHint,
           ),
         ],

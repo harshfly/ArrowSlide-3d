@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../config.dart';
 import '../utils/app_router.dart';
+import '../utils/ad_service.dart';
 import '../utils/storage_service.dart';
 import '../widgets/dotted_background.dart';
 import '../widgets/clay_button.dart';
@@ -216,22 +217,9 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // AdMob Banner Placeholder
-            Container(
-              height: 52,
-              width: double.infinity,
-              color: Colors.white.withValues(alpha: 0.9),
-              child: Center(
-                child: Text(
-                  'AdMob Banner Placeholder',
-                  style: TextStyle(
-                    color: GameConfig.textSecondary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+            // AdMob Banner
+            if (GameConfig.showBannerOnHome)
+              AdService.instance.getBannerWidget(),
           ],
         ),
       ),
