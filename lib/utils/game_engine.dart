@@ -27,6 +27,7 @@ class GameEngine extends ChangeNotifier {
   int get moveCount => _moveCount;
   int get score => _score;
   int get timeRemaining => _timeRemaining;
+  int get elapsedSeconds => _timeRemaining;
   int get lives => _lives;
   bool get isWon => _isWon;
   bool get isFailed => _isFailed;
@@ -233,7 +234,7 @@ class GameEngine extends ChangeNotifier {
     _undoStack.add(_UndoState(
       blocks: _blocks.map((b) => b.copyWith()).toList(),
       score: _score,
-      elapsedSeconds: _elapsedSeconds,
+      timeRemaining: _timeRemaining,
     ));
     if (_undoStack.length > GameConfig.maxUndos) {
       _undoStack.removeAt(0);
@@ -245,7 +246,7 @@ class GameEngine extends ChangeNotifier {
     final state = _undoStack.removeLast();
     _blocks = state.blocks;
     _score = state.score;
-    _elapsedSeconds = state.elapsedSeconds;
+    _timeRemaining = state.timeRemaining;
     _moveCount = (_moveCount - 1).clamp(0, _moveCount);
     _isWon = false;
     _checkGameState();
@@ -266,11 +267,11 @@ class GameEngine extends ChangeNotifier {
 class _UndoState {
   final List<ArrowBlock> blocks;
   final int score;
-  final int elapsedSeconds;
+  final int timeRemaining;
 
   _UndoState({
     required this.blocks,
     required this.score,
-    required this.elapsedSeconds,
+    required this.timeRemaining,
   });
 }
