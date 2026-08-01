@@ -37,6 +37,7 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.monetization_on_rounded,
                     iconColor: GameConfig.accent,
                     value: '${userData.coins}',
+                  ),
                 ],
               ),
             ),
@@ -219,13 +220,22 @@ class HomeScreen extends StatelessWidget {
     bool hasPlus = false,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.white,
+          width: 2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: iconColor.withValues(alpha: 0.12),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -234,25 +244,37 @@ class HomeScreen extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: iconColor, size: 18),
-          const SizedBox(width: 6),
+          Icon(icon, color: iconColor, size: 20),
+          const SizedBox(width: 8),
           Text(
             value,
             style: const TextStyle(
               color: GameConfig.textPrimary,
-              fontWeight: FontWeight.w800,
-              fontSize: 14,
+              fontWeight: FontWeight.w900,
+              fontSize: 15,
+              letterSpacing: 0.3,
             ),
           ),
           if (hasPlus) ...[
-            const SizedBox(width: 6),
+            const SizedBox(width: 8),
             Container(
-              padding: const EdgeInsets.all(2),
-              decoration: const BoxDecoration(
-                color: GameConfig.secondary,
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [GameConfig.secondary, GameConfig.secondaryDepth],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: GameConfig.secondary.withValues(alpha: 0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: const Icon(Icons.add_rounded, color: Colors.white, size: 12),
+              child: const Icon(Icons.add_rounded, color: Colors.white, size: 14),
             ),
           ],
         ],
@@ -268,29 +290,34 @@ class HomeScreen extends StatelessWidget {
     return AnimatedScaleButton(
       onTap: onTap,
       child: Container(
-        height: 52,
+        height: 54,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: Colors.white,
+            width: 2.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: GameConfig.textPrimary, size: 20),
+            Icon(icon, color: GameConfig.textPrimary, size: 22),
             const SizedBox(width: 8),
             Text(
               label,
               style: const TextStyle(
                 color: GameConfig.textPrimary,
                 fontSize: 15,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.5,
               ),
             ),
           ],
@@ -306,20 +333,24 @@ class HomeScreen extends StatelessWidget {
     return AnimatedScaleButton(
       onTap: onTap,
       child: Container(
-        width: 52,
-        height: 52,
+        width: 54,
+        height: 54,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: Colors.white,
+            width: 2.5,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 5),
             ),
           ],
         ),
-        child: Icon(icon, color: GameConfig.textPrimary, size: 22),
+        child: Icon(icon, color: GameConfig.textPrimary, size: 24),
       ),
     );
   }

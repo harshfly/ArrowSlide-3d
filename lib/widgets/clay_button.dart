@@ -22,7 +22,7 @@ class ClayButton extends StatefulWidget {
     this.height = 64,
     this.width = double.infinity,
     this.borderRadius = 22,
-    this.depth = 8,
+    this.depth = 7,
     this.padding = const EdgeInsets.symmetric(horizontal: 24),
   });
 
@@ -50,7 +50,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final topOffset = _isPressed ? (widget.depth - 2.0) : 0.0;
+    final topOffset = _isPressed ? (widget.depth - 1.5) : 0.0;
 
     return GestureDetector(
       onTapDown: _handleTapDown,
@@ -66,7 +66,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
           children: [
             // Solid 3D Depth Layer (Bottom clay block)
             Positioned(
-              top: widget.depth,
+              bottom: 0,
               left: 0,
               right: 0,
               child: Container(
@@ -78,7 +78,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
               ),
             ),
 
-            // 3. Top Action Layer (Pushes down on tap)
+            // Top Action Layer (Pushes down on tap)
             AnimatedPositioned(
               duration: const Duration(milliseconds: 80),
               curve: Curves.easeOutCubic,
@@ -89,10 +89,43 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
                 height: widget.height,
                 padding: widget.padding,
                 decoration: BoxDecoration(
-                  color: widget.color,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color.lerp(widget.color, Colors.white, 0.12)!,
+                      widget.color,
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(widget.borderRadius),
                 ),
-                child: Center(child: widget.child),
+                child: Stack(
+                  children: [
+                    // Inner top highlight for clay sheen
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: widget.height * 0.45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(widget.borderRadius),
+                          ),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.18),
+                              Colors.white.withValues(alpha: 0.0),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(child: widget.child),
+                  ],
+                ),
               ),
             ),
           ],
