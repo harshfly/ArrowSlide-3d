@@ -46,35 +46,7 @@ class AdService {
   /// Load a banner ad and return a widget to display it.
   Widget getBannerWidget() {
     if (!_initialized) return const SizedBox(height: 50);
-
-    _bannerAd ??= BannerAd(
-      adUnitId: GameConfig.bannerAdId,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (ad) {
-          _isBannerLoaded = true;
-        },
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('Banner failed: $error');
-          ad.dispose();
-          _bannerAd = null;
-          _isBannerLoaded = false;
-        },
-      ),
-    )..load();
-
-    return StatefulBuilder(
-      builder: (context, setState) {
-        if (_bannerAd == null) return const SizedBox(height: 50);
-        return Container(
-          alignment: Alignment.center,
-          width: _bannerAd!.size.width.toDouble(),
-          height: _bannerAd!.size.height.toDouble(),
-          child: AdWidget(ad: _bannerAd!),
-        );
-      },
-    );
+    return const _BannerAdWidget();
   }
 
   /// Dispose and reload banner for fresh screens.
@@ -196,3 +168,61 @@ class AdService {
     _rewardedAd?.dispose();
   }
 }
+
+class _BannerAdWidget extends StatefulWidget {
+  const _BannerAdWidget();
+
+  @override
+  State<_BannerAdWidget> createState() => _BannerAdWidgetState();
+}
+
+class _BannerAdWidgetState extends State<_BannerAdWidget> {
+  BannerAd? _bannerAd;
+  bool _isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBanner();
+  }
+
+  void _loadBanner() {
+    _bannerAd = BannerAd(
+      adUnitId: GameConfig.bannerAdId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          if (mounted) {
+            setState(() => _isLoaded = true);
+          }
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('Banner ad failed to load: $error');
+          ad.dispose();
+          _bannerAd = null;
+        },
+      ),
+    )..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isLoaded || _bannerAd == null) {
+      return const SizedBox(height: 50);
+    }
+    return Container(
+      alignment: Alignment.center,
+      width: _bannerAd!.size.width.toDouble(),
+      height: _bannerAd!.size.height.toDouble(),
+      child: AdWidget(ad: _bannerAd!),
+    );
+  }
+}
+

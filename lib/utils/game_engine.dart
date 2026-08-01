@@ -120,9 +120,19 @@ class GameEngine extends ChangeNotifier {
       cx += dx;
       cy += dy;
       if (cx < 0 || cx >= _level.gridWidth || cy < 0 || cy >= _level.gridHeight) {
-        // Path is completely clear. Set target outside the board for animation.
-        int farX = block.x + (dx * (_level.gridWidth + 2));
-        int farY = block.y + (dy * (_level.gridHeight + 2));
+        // Path is completely clear. Set target cleanly outside the board for animation.
+        int farX = block.x;
+        int farY = block.y;
+        if (dx < 0) {
+          farX = -3;
+        } else if (dx > 0) {
+          farX = _level.gridWidth + 2;
+        }
+        if (dy < 0) {
+          farY = -3;
+        } else if (dy > 0) {
+          farY = _level.gridHeight + 2;
+        }
         return (farX, farY, true, true);
       }
       if (getBlockAt(cx, cy) != null) {
@@ -177,7 +187,7 @@ class GameEngine extends ChangeNotifier {
       }
       
       notifyListeners();
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         _invalidTapTriggered = false;
         notifyListeners();
       });
@@ -191,7 +201,7 @@ class GameEngine extends ChangeNotifier {
       _blocks[blockIndex] = block.copyWith(x: finalX, y: finalY);
       _score += 100;
       // Delay actual removal so the UI can animate the slide-out
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(GameConfig.blockSlideDuration, () {
         _blocks.removeWhere((b) => b.id == block.id);
         _checkGameState();
         notifyListeners();

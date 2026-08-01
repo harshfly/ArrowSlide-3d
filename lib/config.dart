@@ -154,14 +154,14 @@ class GameConfig {
 
   // ─── Animations ───────────────────────────────────────────────────────
   static const Duration splashDuration = Duration(milliseconds: 2500);
-  static const Duration blockSlideDuration = Duration(milliseconds: 300);
+  static const Duration blockSlideDuration = Duration(milliseconds: 160);
   static const Duration screenTransitionDuration = Duration(milliseconds: 300);
   static const Duration staggerAnimationDuration = Duration(milliseconds: 1200);
   static const Duration starAnimationDuration = Duration(milliseconds: 1500);
   static const Duration particleDuration = Duration(milliseconds: 800);
   static const Duration buttonPressDuration = Duration(milliseconds: 150);
 
-  static const Curve blockSlideCurve = Curves.easeInOut;
+  static const Curve blockSlideCurve = Curves.easeOutQuad;
   static const Curve screenTransitionCurve = Curves.easeOut;
 
   // ─── Gameplay ─────────────────────────────────────────────────────────

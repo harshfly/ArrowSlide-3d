@@ -251,6 +251,9 @@ class _GameplayScreenState extends State<GameplayScreen>
         AudioService.instance.playWinSound();
         _onLevelWon();
       }
+    } else {
+      AudioService.instance.playTap();
+      HapticFeedback.mediumImpact();
     }
   }
 
@@ -487,8 +490,8 @@ class _GameplayScreenState extends State<GameplayScreen>
           ..._engine.blocks.map((block) {
             return AnimatedPositioned(
               key: ValueKey(block.id),
-              duration: const Duration(milliseconds: 280),
-              curve: Curves.easeOutCubic,
+              duration: GameConfig.blockSlideDuration,
+              curve: GameConfig.blockSlideCurve,
               left: block.x * cellSize,
               top: block.y * cellSize,
               child: ArrowBlockWidget(
