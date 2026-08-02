@@ -1,14 +1,24 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_data.dart';
 import '../config.dart';
 
-/// Persists user data using SharedPreferences.
+/// Persists user data using SharedPreferences with batched/debounced writes.
+///
+/// All mutations are applied to the in-memory [UserData] immediately,
+/// and a single debounced write flushes to disk after [_writeDebounceDuration].
+/// This prevents blocking the UI thread on every coin/level update.
 class StorageService {
   static const String _userDataKey = 'arrowslide_user_data';
+  static const Duration _writeDebounceDuration = Duration(milliseconds: 500);
+
   static StorageService? _instance;
   late SharedPreferences _prefs;
   late UserData _userData;
+  Timer? _writeTimer;
+  bool _isDirty = false;
 
   StorageService._();
 
@@ -21,28 +31,60 @@ class StorageService {
   }
 
   Future<void> _init() async {
-    _prefs = await SharedPreferences.getInstance();
-    _loadUserData();
+    try {
+      _prefs = await SharedPreferences.getInstance();
+      _loadUserData();
+    } catch (e) {
+      _debugLog('StorageService init error: $e');
+      _userData = UserData();
+    }
   }
 
   void _loadUserData() {
-    final jsonStr = _prefs.getString(_userDataKey);
-    if (jsonStr != null) {
-      _userData = UserData.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>);
-    } else {
+    try {
+      final jsonStr = _prefs.getString(_userDataKey);
+      if (jsonStr != null) {
+        _userData = UserData.fromJson(
+          jsonDecode(jsonStr) as Map<String, dynamic>,
+        );
+      } else {
+        _userData = UserData();
+      }
+    } catch (e) {
+      _debugLog('Failed to load user data: $e');
       _userData = UserData();
     }
   }
 
   UserData get userData => _userData;
 
+  /// Schedule a debounced write to disk.
+  void _scheduleSave() {
+    _isDirty = true;
+    _writeTimer?.cancel();
+    _writeTimer = Timer(_writeDebounceDuration, _flushToDisk);
+  }
+
+  /// Force an immediate save (e.g., before app goes to background).
   Future<void> saveUserData() async {
-    await _prefs.setString(_userDataKey, jsonEncode(_userData.toJson()));
+    _writeTimer?.cancel();
+    await _flushToDisk();
+  }
+
+  Future<void> _flushToDisk() async {
+    if (!_isDirty) return;
+    try {
+      final json = jsonEncode(_userData.toJson());
+      await _prefs.setString(_userDataKey, json);
+      _isDirty = false;
+    } catch (e) {
+      _debugLog('Failed to save user data: $e');
+    }
   }
 
   Future<void> unlockLevel(int levelId) async {
     _userData.unlockedLevels.add(levelId);
-    await saveUserData();
+    _scheduleSave();
   }
 
   Future<void> completeLevel(int levelId, int moves, int stars) async {
@@ -64,46 +106,47 @@ class StorageService {
     }
 
     // Award coins
-    final coinReward = GameConfig.levelCompleteBaseCoins + (stars * GameConfig.coinsPerStar);
+    final coinReward = calculateLevelReward(stars);
     _userData.coins += coinReward;
 
     // Track completed levels count for interstitial ads
     _userData.completedLevelsCount++;
 
-    await saveUserData();
+    _scheduleSave();
   }
 
   /// Returns total coins earned from level completion.
   int calculateLevelReward(int stars) {
-    return GameConfig.levelCompleteBaseCoins + (stars * GameConfig.coinsPerStar);
+    return GameConfig.levelCompleteBaseCoins +
+        (stars * GameConfig.coinsPerStar);
   }
 
   Future<void> addCoins(int amount) async {
     _userData.coins += amount;
-    await saveUserData();
+    _scheduleSave();
   }
 
   Future<void> spendCoins(int amount) async {
     _userData.coins = (_userData.coins - amount).clamp(0, 999999);
-    await saveUserData();
+    _scheduleSave();
   }
 
   Future<void> addHint() async {
     _userData.hints++;
-    await saveUserData();
+    _scheduleSave();
   }
 
   Future<void> useHint() async {
     if (_userData.hints > 0) {
       _userData.hints--;
-      await saveUserData();
+      _scheduleSave();
     }
   }
 
   /// Claim daily reward. Returns the reward details.
   Future<Map<String, dynamic>> claimDailyReward() async {
     final reward = _userData.claimDailyReward();
-    await saveUserData();
+    _scheduleSave();
     return reward;
   }
 
@@ -125,11 +168,22 @@ class StorageService {
       dailyRewardDay: _userData.dailyRewardDay,
       lastDailyRewardDate: _userData.lastDailyRewardDate,
     );
-    await saveUserData();
+    _scheduleSave();
   }
 
   Future<void> resetProgress() async {
     _userData = UserData();
-    await saveUserData();
+    await saveUserData(); // Immediate write for destructive action
+  }
+
+  /// Cancel pending timers when the service is no longer needed.
+  void dispose() {
+    _writeTimer?.cancel();
+  }
+
+  static void _debugLog(String message) {
+    if (kDebugMode) {
+      debugPrint('[StorageService] $message');
+    }
   }
 }

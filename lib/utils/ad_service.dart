@@ -1,19 +1,28 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../config.dart';
 
 /// AdMob service — manages banner, interstitial, and rewarded ads.
+///
+/// Features:
+/// - Pre-loads interstitial and rewarded ads at init
+/// - Exponential backoff on load failures (30s → 60s → 120s, max 5min)
+/// - Graceful failure handling — never blocks UI
+/// - Debug-only logging
 class AdService {
   static AdService? _instance;
   bool _initialized = false;
 
-  BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
   RewardedAd? _rewardedAd;
 
-  bool _isBannerLoaded = false;
   bool _isInterstitialLoaded = false;
   bool _isRewardedLoaded = false;
+
+  int _interstitialRetryCount = 0;
+  int _rewardedRetryCount = 0;
+  static const int _maxRetries = 5;
 
   AdService._();
 
@@ -23,19 +32,19 @@ class AdService {
   }
 
   bool get isInitialized => _initialized;
-  bool get isBannerLoaded => _isBannerLoaded;
 
   /// Initialize the Mobile Ads SDK. Must be called once at app start.
   Future<bool> init() async {
+    if (_initialized) return true;
     try {
       await MobileAds.instance.initialize();
       _initialized = true;
-      // Pre-load ads
+      // Pre-load ads in background
       _loadInterstitialAd();
       _loadRewardedAd();
       return true;
     } catch (e) {
-      debugPrint('AdService init error: $e');
+      _debugLog('AdService init error: $e');
       _initialized = false;
       return false;
     }
@@ -43,17 +52,10 @@ class AdService {
 
   // ─── Banner Ad ──────────────────────────────────────────────────────
 
-  /// Load a banner ad and return a widget to display it.
+  /// Returns a banner ad widget. Safe to call even if SDK not initialized.
   Widget getBannerWidget() {
     if (!_initialized) return const SizedBox(height: 50);
     return const _BannerAdWidget();
-  }
-
-  /// Dispose and reload banner for fresh screens.
-  void disposeBanner() {
-    _bannerAd?.dispose();
-    _bannerAd = null;
-    _isBannerLoaded = false;
   }
 
   // ─── Interstitial Ad ────────────────────────────────────────────────
@@ -67,14 +69,16 @@ class AdService {
         onAdLoaded: (ad) {
           _interstitialAd = ad;
           _isInterstitialLoaded = true;
+          _interstitialRetryCount = 0;
           ad.fullScreenContentCallback = FullScreenContentCallback(
             onAdDismissedFullScreenContent: (ad) {
               ad.dispose();
               _interstitialAd = null;
               _isInterstitialLoaded = false;
-              _loadInterstitialAd(); // Pre-load next
+              _loadInterstitialAd();
             },
             onAdFailedToShowFullScreenContent: (ad, error) {
+              _debugLog('Interstitial show failed: $error');
               ad.dispose();
               _interstitialAd = null;
               _isInterstitialLoaded = false;
@@ -83,22 +87,30 @@ class AdService {
           );
         },
         onAdFailedToLoad: (error) {
-          debugPrint('Interstitial failed: $error');
+          _debugLog('Interstitial load failed: $error');
           _isInterstitialLoaded = false;
-          // Retry after delay
-          Future.delayed(const Duration(seconds: 30), _loadInterstitialAd);
+          _retryWithBackoff(
+            _loadInterstitialAd,
+            _interstitialRetryCount++,
+          );
         },
       ),
     );
   }
 
-  /// Show an interstitial ad. Returns true if shown.
+  /// Show an interstitial ad. Returns true if shown, false otherwise.
+  /// Never blocks UI — returns immediately if ad not ready.
   Future<bool> showInterstitialAd() async {
     if (!_initialized || !_isInterstitialLoaded || _interstitialAd == null) {
       return false;
     }
-    await _interstitialAd!.show();
-    return true;
+    try {
+      await _interstitialAd!.show();
+      return true;
+    } catch (e) {
+      _debugLog('Interstitial show error: $e');
+      return false;
+    }
   }
 
   // ─── Rewarded Ad ────────────────────────────────────────────────────
@@ -112,11 +124,15 @@ class AdService {
         onAdLoaded: (ad) {
           _rewardedAd = ad;
           _isRewardedLoaded = true;
+          _rewardedRetryCount = 0;
         },
         onAdFailedToLoad: (error) {
-          debugPrint('Rewarded failed: $error');
+          _debugLog('Rewarded load failed: $error');
           _isRewardedLoaded = false;
-          Future.delayed(const Duration(seconds: 30), _loadRewardedAd);
+          _retryWithBackoff(
+            _loadRewardedAd,
+            _rewardedRetryCount++,
+          );
         },
       ),
     );
@@ -135,9 +151,10 @@ class AdService {
         ad.dispose();
         _rewardedAd = null;
         _isRewardedLoaded = false;
-        _loadRewardedAd(); // Pre-load next
+        _loadRewardedAd();
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
+        _debugLog('Rewarded show failed: $error');
         ad.dispose();
         _rewardedAd = null;
         _isRewardedLoaded = false;
@@ -145,14 +162,17 @@ class AdService {
       },
     );
 
-    await _rewardedAd!.show(
-      onUserEarnedReward: (ad, reward) {
-        rewarded = true;
-      },
-    );
-
-    // Wait a moment for callback
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      await _rewardedAd!.show(
+        onUserEarnedReward: (ad, reward) {
+          rewarded = true;
+        },
+      );
+      // Brief wait for callback to fire
+      await Future.delayed(const Duration(milliseconds: 500));
+    } catch (e) {
+      _debugLog('Rewarded show error: $e');
+    }
     return rewarded;
   }
 
@@ -162,13 +182,35 @@ class AdService {
   /// Show a rewarded ad for extra moves. Returns true if granted.
   Future<bool> showExtraMovesAd() async => showRewardedAd();
 
+  /// Retry with exponential backoff: 30s, 60s, 120s, 240s, 300s (max).
+  void _retryWithBackoff(VoidCallback loader, int retryCount) {
+    if (retryCount >= _maxRetries) {
+      _debugLog('Max ad retry count reached, stopping retries');
+      return;
+    }
+    final delay = Duration(
+      seconds: (30 * (1 << retryCount)).clamp(30, 300),
+    );
+    Future.delayed(delay, loader);
+  }
+
   void dispose() {
-    _bannerAd?.dispose();
     _interstitialAd?.dispose();
     _rewardedAd?.dispose();
+    _interstitialAd = null;
+    _rewardedAd = null;
+    _isInterstitialLoaded = false;
+    _isRewardedLoaded = false;
+  }
+
+  static void _debugLog(String message) {
+    if (kDebugMode) {
+      debugPrint('[AdService] $message');
+    }
   }
 }
 
+/// Self-contained banner ad widget with proper lifecycle management.
 class _BannerAdWidget extends StatefulWidget {
   const _BannerAdWidget();
 
@@ -198,7 +240,9 @@ class _BannerAdWidgetState extends State<_BannerAdWidget> {
           }
         },
         onAdFailedToLoad: (ad, error) {
-          debugPrint('Banner ad failed to load: $error');
+          if (kDebugMode) {
+            debugPrint('[AdService] Banner load failed: $error');
+          }
           ad.dispose();
           _bannerAd = null;
         },
@@ -217,12 +261,10 @@ class _BannerAdWidgetState extends State<_BannerAdWidget> {
     if (!_isLoaded || _bannerAd == null) {
       return const SizedBox(height: 50);
     }
-    return Container(
-      alignment: Alignment.center,
+    return SizedBox(
       width: _bannerAd!.size.width.toDouble(),
       height: _bannerAd!.size.height.toDouble(),
       child: AdWidget(ad: _bannerAd!),
     );
   }
 }
-

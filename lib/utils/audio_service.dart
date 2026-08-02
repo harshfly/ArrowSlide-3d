@@ -1,14 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../config.dart';
 
-/// Audio service — whoosh.mp3 slide sound via audioplayers with SystemSound fallback.
+/// Audio service — manages SFX playback with proper lifecycle and error handling.
+///
+/// Uses a single reusable [AudioPlayer] for slide sounds with
+/// [PlayerMode.lowLatency], and [SystemSound] fallbacks for simple taps.
 class AudioService {
   static AudioService? _instance;
+
   bool _musicEnabled = GameConfig.defaultMusicEnabled;
   bool _soundEnabled = GameConfig.defaultSoundEnabled;
   bool _initialized = false;
   AudioPlayer? _slidePlayer;
+  bool _isSlidePlayerBusy = false;
 
   AudioService._();
 
@@ -20,8 +26,17 @@ class AudioService {
   bool get musicEnabled => _musicEnabled;
   bool get soundEnabled => _soundEnabled;
 
+  /// Initialize audio — call once at app start.
   Future<void> init() async {
-    _initialized = true;
+    if (_initialized) return;
+    try {
+      _slidePlayer = AudioPlayer();
+      await _slidePlayer!.setPlayerMode(PlayerMode.lowLatency);
+      _initialized = true;
+    } catch (e) {
+      _debugLog('AudioService init error: $e');
+      _initialized = true; // Mark initialized anyway, will use SystemSound fallback
+    }
   }
 
   void setMusicEnabled(bool enabled) {
@@ -33,31 +48,47 @@ class AudioService {
     _soundEnabled = enabled;
   }
 
-  /// Play the whoosh slide sound
+  /// Play the whoosh slide sound with debounce to avoid overlap.
   Future<void> playSlideSound() async {
-    if (!_soundEnabled || !_initialized) return;
+    if (!_soundEnabled || !_initialized || _isSlidePlayerBusy) return;
+    _isSlidePlayerBusy = true;
     try {
-      _slidePlayer ??= AudioPlayer();
-      await _slidePlayer!.stop();
-      await _slidePlayer!.play(AssetSource('audio/whoosh-sfx.mp3'), mode: PlayerMode.lowLatency);
+      final player = _slidePlayer;
+      if (player != null) {
+        await player.stop();
+        await player.play(
+          AssetSource('audio/whoosh-sfx.mp3'),
+          mode: PlayerMode.lowLatency,
+        );
+      }
     } catch (e) {
+      _debugLog('Slide sound error: $e');
+      // Fallback to system click
       SystemSound.play(SystemSoundType.click);
+    } finally {
+      _isSlidePlayerBusy = false;
     }
   }
 
   Future<void> playWinSound() async {
     if (!_soundEnabled || !_initialized) return;
-    SystemSound.play(SystemSoundType.click);
+    try {
+      SystemSound.play(SystemSoundType.click);
+    } catch (_) {}
   }
 
   Future<void> playFailSound() async {
     if (!_soundEnabled || !_initialized) return;
-    SystemSound.play(SystemSoundType.alert);
+    try {
+      SystemSound.play(SystemSoundType.alert);
+    } catch (_) {}
   }
 
   Future<void> playTap() async {
     if (!_soundEnabled || !_initialized) return;
-    SystemSound.play(SystemSoundType.click);
+    try {
+      SystemSound.play(SystemSoundType.click);
+    } catch (_) {}
   }
 
   Future<void> playSlide() => playSlideSound();
@@ -67,7 +98,18 @@ class AudioService {
   Future<void> startBgMusic() async {}
   Future<void> stopBgMusic() async {}
 
+  /// Properly release audio resources.
   void dispose() {
     stopBgMusic();
+    _slidePlayer?.dispose();
+    _slidePlayer = null;
+    _initialized = false;
+  }
+
+  /// Log only in debug mode.
+  static void _debugLog(String message) {
+    if (kDebugMode) {
+      debugPrint('[AudioService] $message');
+    }
   }
 }
