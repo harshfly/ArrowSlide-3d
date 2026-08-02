@@ -26,6 +26,13 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
+            // Enable R8 shrinking and optimization for smaller APK
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.8
   shared_preferences: ^2.3.4
   provider: ^6.1.2
   google_mobile_ads: ^5.3.0
@@ -19,6 +18,7 @@ dependencies:
   google_fonts: ^6.1.0
   confetti: ^0.8.0
   audioplayers: ^6.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

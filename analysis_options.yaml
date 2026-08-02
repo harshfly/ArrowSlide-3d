@@ -1,28 +1,46 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
-
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
+# ArrowSlide 3D — Strict production lint configuration
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
-  rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+analyzer:
+  errors:
+    missing_return: error
+    missing_required_param: error
+    dead_code: warning
+    unused_import: warning
+    unused_local_variable: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+linter:
+  rules:
+    # Performance
+    avoid_unnecessary_containers: true
+    prefer_const_constructors: true
+    prefer_const_declarations: true
+    prefer_const_literals_to_create_immutables: true
+    sized_box_for_whitespace: true
+    use_colored_box: true
+    use_decorated_box: true
+
+    # Style
+    prefer_single_quotes: true
+    always_use_package_imports: false
+    prefer_relative_imports: true
+    sort_child_properties_last: true
+    use_full_hex_values_for_flutter_colors: true
+
+    # Safety
+    avoid_print: true
+    cancel_subscriptions: true
+    close_sinks: true
+    no_duplicate_case_values: true
+    prefer_void_to_null: true
+    unnecessary_null_checks: true
+
+    # Readability
+    prefer_final_locals: true
+    prefer_final_in_for_each: true
+    unnecessary_this: true
+    unnecessary_new: true
+    unnecessary_const: true
