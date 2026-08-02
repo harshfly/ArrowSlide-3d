@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/audio_service.dart';
 
+/// A claymorphism-style 3D button with press depth animation.
+///
+/// Uses [AnimatedPositioned] for the push-down effect rather than full rebuilds.
 class ClayButton extends StatefulWidget {
   final VoidCallback onTap;
   final Widget child;
@@ -30,7 +33,7 @@ class ClayButton extends StatefulWidget {
   State<ClayButton> createState() => _ClayButtonState();
 }
 
-class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateMixin {
+class _ClayButtonState extends State<ClayButton> {
   bool _isPressed = false;
 
   void _handleTapDown(TapDownDetails details) {
@@ -52,14 +55,13 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final topOffset = _isPressed ? (widget.depth - 1.5) : 0.0;
+    final highlightColor = Color.lerp(widget.color, Colors.white, 0.12)!;
 
     return GestureDetector(
       onTapDown: _handleTapDown,
       onTapUp: _handleTapUp,
       onTapCancel: _handleTapCancel,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 80),
-        curve: Curves.easeOutCubic,
+      child: SizedBox(
         width: widget.width,
         height: widget.height + widget.depth,
         child: Stack(
@@ -70,12 +72,12 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
               bottom: 0,
               left: 0,
               right: 0,
-              child: Container(
-                height: widget.height,
+              child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: widget.depthColor,
                   borderRadius: BorderRadius.circular(widget.borderRadius),
                 ),
+                child: SizedBox(height: widget.height),
               ),
             ),
 
@@ -93,10 +95,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Color.lerp(widget.color, Colors.white, 0.12)!,
-                      widget.color,
-                    ],
+                    colors: [highlightColor, widget.color],
                   ),
                   borderRadius: BorderRadius.circular(widget.borderRadius),
                 ),
@@ -107,8 +106,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
                       top: 0,
                       left: 0,
                       right: 0,
-                      child: Container(
-                        height: widget.height * 0.45,
+                      child: DecoratedBox(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.vertical(
                             top: Radius.circular(widget.borderRadius),
@@ -122,6 +120,7 @@ class _ClayButtonState extends State<ClayButton> with SingleTickerProviderStateM
                             ],
                           ),
                         ),
+                        child: SizedBox(height: widget.height * 0.45),
                       ),
                     ),
                     Center(child: widget.child),

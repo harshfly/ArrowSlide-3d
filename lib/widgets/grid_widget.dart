@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-
 /// Clean dark grid painter for ArrowSlide 3D.
+///
+/// Wrapped in a [RepaintBoundary] to avoid unnecessary repaints
+/// when sibling widgets (blocks) update during gameplay.
 class GridWidget extends StatelessWidget {
   final int gridWidth;
   final int gridHeight;
@@ -16,9 +18,15 @@ class GridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(gridWidth * cellSize, gridHeight * cellSize),
-      painter: _GridPainter(gridWidth: gridWidth, gridHeight: gridHeight, cellSize: cellSize),
+    return RepaintBoundary(
+      child: CustomPaint(
+        size: Size(gridWidth * cellSize, gridHeight * cellSize),
+        painter: _GridPainter(
+          gridWidth: gridWidth,
+          gridHeight: gridHeight,
+          cellSize: cellSize,
+        ),
+      ),
     );
   }
 }
@@ -28,7 +36,11 @@ class _GridPainter extends CustomPainter {
   final int gridHeight;
   final double cellSize;
 
-  _GridPainter({required this.gridWidth, required this.gridHeight, required this.cellSize});
+  const _GridPainter({
+    required this.gridWidth,
+    required this.gridHeight,
+    required this.cellSize,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -68,5 +80,7 @@ class _GridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _GridPainter old) =>
-      old.gridWidth != gridWidth || old.gridHeight != gridHeight || old.cellSize != cellSize;
+      old.gridWidth != gridWidth ||
+      old.gridHeight != gridHeight ||
+      old.cellSize != cellSize;
 }

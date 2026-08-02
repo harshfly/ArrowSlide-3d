@@ -1,8 +1,51 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../models/arrow_block.dart';
 
+/// Precomputed color palette for arrow blocks.
+/// Cached by block ID hash to avoid per-frame allocations.
+class _BlockColors {
+  final List<Color> topGradient;
+  final Color sideColor;
+
+  const _BlockColors(this.topGradient, this.sideColor);
+
+  static const _palettes = <List<Color>>[
+    [Color(0xFFFF6B70), Color(0xFFFF4D53)], // Red/Coral
+    [Color(0xFF5CA4FF), Color(0xFF3388FF)], // Blue
+    [Color(0xFF4EE1A8), Color(0xFF26CA88)], // Green
+    [Color(0xFFFFC53D), Color(0xFFFAAD14)], // Yellow
+    [Color(0xFFC068FF), Color(0xFFA13DFF)], // Purple
+    [Color(0xFFFF9A4D), Color(0xFFFF7A1E)], // Orange
+  ];
+
+  static const _sideColors = <Color>[
+    Color(0xFFD93D43), // Red Side
+    Color(0xFF216DE6), // Blue Side
+    Color(0xFF19B273), // Green Side
+    Color(0xFFD8920C), // Yellow Side
+    Color(0xFF8622E3), // Purple Side
+    Color(0xFFDB600A), // Orange Side
+  ];
+
+  static final _cache = <int, _BlockColors>{};
+
+  static _BlockColors forId(String id) {
+    final hash = id.hashCode.abs();
+    return _cache.putIfAbsent(hash, () {
+      final index = hash % _palettes.length;
+      return _BlockColors(_palettes[index], _sideColors[index]);
+    });
+  }
+}
+
 /// Renders a single arrow block as a glossy 3D isometric rounded clay cube.
+///
+/// Production optimizations:
+/// - Precomputed & cached color palettes per block ID
+/// - Const paint objects reused across frames
+/// - RepaintBoundary should be applied by the parent
 class ArrowBlockWidget extends StatelessWidget {
   final ArrowBlock block;
   final double cellSize;
@@ -23,17 +66,14 @@ class ArrowBlockWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Make the block size a bit smaller than the cell size so they aren't touching
     final blockSize = cellSize * 0.85;
-    final depthY = 8.0;
+    const depthY = 8.0;
 
     if (block.isHidden) {
       return SizedBox(width: cellSize, height: cellSize);
     }
 
-    final topColors = _topGradientColors();
-    final sideColor = _sideColor();
-    final glowColor = Colors.black.withValues(alpha: 0.16); // soft drop shadow
+    final colors = _BlockColors.forId(block.id);
 
     return GestureDetector(
       onTap: onTap,
@@ -51,19 +91,18 @@ class ArrowBlockWidget extends StatelessWidget {
                   top: depthY + 3,
                   left: 2,
                   right: 2,
-                  child: Container(
-                    height: blockSize,
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
-                          color: glowColor,
+                          color: Color(0x29000000), // 0.16 alpha
                           blurRadius: 12,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 5),
+                          offset: Offset(0, 5),
                         ),
                       ],
                     ),
+                    child: SizedBox(height: blockSize),
                   ),
                 ),
 
@@ -72,12 +111,12 @@ class ArrowBlockWidget extends StatelessWidget {
                   top: depthY,
                   left: 0,
                   right: 0,
-                  child: Container(
-                    height: blockSize,
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: sideColor,
+                      color: colors.sideColor,
                       borderRadius: BorderRadius.circular(18),
                     ),
+                    child: SizedBox(height: blockSize),
                   ),
                 ),
 
@@ -92,7 +131,7 @@ class ArrowBlockWidget extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: topColors,
+                        colors: colors.topGradient,
                       ),
                       borderRadius: BorderRadius.circular(18),
                       border: isHighlighted
@@ -106,8 +145,7 @@ class ArrowBlockWidget extends StatelessWidget {
                           top: 0,
                           left: 0,
                           right: 0,
-                          child: Container(
-                            height: blockSize * 0.42,
+                          child: DecoratedBox(
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(18),
@@ -121,11 +159,15 @@ class ArrowBlockWidget extends StatelessWidget {
                                 ],
                               ),
                             ),
+                            child: SizedBox(height: blockSize * 0.42),
                           ),
                         ),
                         // Arrow Icon
                         Center(
-                          child: _buildArrowIcon(blockSize),
+                          child: _ArrowIcon(
+                            direction: block.direction,
+                            size: blockSize * 0.52,
+                          ),
                         ),
                       ],
                     ),
@@ -138,50 +180,27 @@ class ArrowBlockWidget extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildArrowIcon(double size) {
+/// Lightweight arrow icon widget using CustomPaint.
+class _ArrowIcon extends StatelessWidget {
+  final Direction direction;
+  final double size;
+
+  const _ArrowIcon({required this.direction, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
-      width: size * 0.52,
-      height: size * 0.52,
+      width: size,
+      height: size,
       child: CustomPaint(
         painter: _ThickArrowPainter(
-          direction: block.direction,
-          color: Colors.white.withValues(alpha: 0.98),
+          direction: direction,
+          color: const Color(0xFAFFFFFF), // 0.98 alpha white
         ),
       ),
     );
-  }
-
-  List<Color> _topGradientColors() {
-    final palettes = [
-      // Vibrant Red/Coral
-      [const Color(0xFFFF6B70), const Color(0xFFFF4D53)],
-      // Crisp Blue
-      [const Color(0xFF5CA4FF), const Color(0xFF3388FF)],
-      // Minty Green
-      [const Color(0xFF4EE1A8), const Color(0xFF26CA88)],
-      // Sunny Yellow
-      [const Color(0xFFFFC53D), const Color(0xFFFAAD14)],
-      // Rich Purple
-      [const Color(0xFFC068FF), const Color(0xFFA13DFF)],
-      // Tangy Orange
-      [const Color(0xFFFF9A4D), const Color(0xFFFF7A1E)],
-    ];
-    final hash = block.id.hashCode.abs();
-    return palettes[hash % palettes.length];
-  }
-
-  Color _sideColor() {
-    final colors = [
-      const Color(0xFFD93D43), // Red Side
-      const Color(0xFF216DE6), // Blue Side
-      const Color(0xFF19B273), // Green Side
-      const Color(0xFFD8920C), // Yellow Side
-      const Color(0xFF8622E3), // Purple Side
-      const Color(0xFFDB600A), // Orange Side
-    ];
-    final hash = block.id.hashCode.abs();
-    return colors[hash % colors.length];
   }
 }
 
@@ -189,7 +208,7 @@ class _ThickArrowPainter extends CustomPainter {
   final Direction direction;
   final Color color;
 
-  _ThickArrowPainter({required this.direction, required this.color});
+  const _ThickArrowPainter({required this.direction, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -201,33 +220,29 @@ class _ThickArrowPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     final path = Path();
-    final center = Offset(size.width / 2, size.height / 2);
+    final cx = size.width / 2;
+    final cy = size.height / 2;
 
     canvas.save();
-    canvas.translate(center.dx, center.dy);
+    canvas.translate(cx, cy);
 
-    // Rotate based on direction (assuming default is UP)
+    // Rotate based on direction (default is UP)
     switch (direction) {
       case Direction.up:
         break;
       case Direction.right:
-        canvas.rotate(3.14159 / 2);
-        break;
+        canvas.rotate(math.pi / 2);
       case Direction.down:
-        canvas.rotate(3.14159);
-        break;
+        canvas.rotate(math.pi);
       case Direction.left:
-        canvas.rotate(-3.14159 / 2);
-        break;
+        canvas.rotate(-math.pi / 2);
     }
 
-    canvas.translate(-center.dx, -center.dy);
+    canvas.translate(-cx, -cy);
 
-    // Draw Up Arrow
-    // Stem
+    // Draw Up Arrow — stem + head
     path.moveTo(size.width / 2, size.height * 0.88);
     path.lineTo(size.width / 2, size.height * 0.12);
-    // Head
     path.moveTo(size.width * 0.18, size.height * 0.42);
     path.lineTo(size.width / 2, size.height * 0.12);
     path.lineTo(size.width * 0.82, size.height * 0.42);
