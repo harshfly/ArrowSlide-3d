@@ -7,6 +7,8 @@ import '../utils/app_router.dart';
 import '../utils/ad_service.dart';
 
 /// Splash screen — loads assets, checks internet, initializes AdMob.
+///
+/// Uses [ListenableBuilder] instead of deprecated AnimatedBuilder.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -16,10 +18,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late AnimationController _floatController;
-  late Animation<double> _fadeIn;
-  late Animation<double> _scale;
+  late final AnimationController _controller;
+  late final AnimationController _floatController;
+  late final Animation<double> _fadeIn;
+  late final Animation<double> _scale;
 
   double _loadProgress = 0.0;
 
@@ -36,10 +38,14 @@ class _SplashScreenState extends State<SplashScreen>
     )..repeat();
 
     _fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
     );
     _scale = Tween<double>(begin: 0.7, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack)),
+      CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack)),
     );
     _controller.forward();
 
@@ -48,33 +54,35 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _initializeApp() async {
     // Step 1: Check internet connection
-
     await _simulateProgress(0.2);
+    if (!mounted) return;
 
-    final connectivityResult = await Connectivity().checkConnectivity();
-    final hasInternet = !connectivityResult.contains(ConnectivityResult.none);
+    try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final hasInternet =
+          !connectivityResult.contains(ConnectivityResult.none);
 
-    if (!hasInternet) {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRouter.noInternet);
+      if (!hasInternet) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, AppRouter.noInternet);
+        }
+        return;
       }
-      return;
+    } catch (_) {
+      // Connectivity check failed — proceed anyway (graceful offline)
     }
 
     // Step 2: Initialize AdMob
-
     await _simulateProgress(0.5);
+    if (!mounted) return;
     await AdService.instance.init();
 
     // Step 3: Load assets
-
     await _simulateProgress(0.8);
+    if (!mounted) return;
 
     // Step 4: Ready
-    setState(() {
-
-      _loadProgress = 1.0;
-    });
+    setState(() => _loadProgress = 1.0);
     await Future.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
@@ -107,10 +115,10 @@ class _SplashScreenState extends State<SplashScreen>
         children: [
           // Background animated floating arrows
           ..._buildFloatingCubes(),
-          
+
           Center(
-            child: AnimatedBuilder(
-              animation: _controller,
+            child: ListenableBuilder(
+              listenable: _controller,
               builder: (context, child) {
                 return Opacity(
                   opacity: _fadeIn.value,
@@ -130,15 +138,16 @@ class _SplashScreenState extends State<SplashScreen>
                     fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 60),
-                  
+
                   // Progress bar
                   Text(
                     'LOADING...',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: Colors.white70,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style:
+                        Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: Colors.white70,
+                              letterSpacing: 2,
+                              fontWeight: FontWeight.bold,
+                            ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
@@ -146,12 +155,12 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        Container(
-                          height: 6,
+                        DecoratedBox(
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          child: const SizedBox(height: 6, width: 220),
                         ),
                         Align(
                           alignment: Alignment.centerLeft,
@@ -164,7 +173,8 @@ class _SplashScreenState extends State<SplashScreen>
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
-                                  color: GameConfig.primary.withValues(alpha: 0.5),
+                                  color: GameConfig.primary
+                                      .withValues(alpha: 0.5),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -179,15 +189,15 @@ class _SplashScreenState extends State<SplashScreen>
                   Text(
                     '${(_loadProgress * 100).toInt()}%',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           // Version text at bottom
           Align(
             alignment: Alignment.bottomCenter,
@@ -196,8 +206,8 @@ class _SplashScreenState extends State<SplashScreen>
               child: Text(
                 'v${GameConfig.appVersion}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white38,
-                ),
+                      color: Colors.white38,
+                    ),
               ),
             ),
           ),
@@ -261,15 +271,18 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Widget _positionedArrow({
-    double? top, double? bottom, double? left, double? right,
+    double? top,
+    double? bottom,
+    double? left,
+    double? right,
     required double size,
     required Color color,
     required String direction,
     required double offsetPhase,
     required IconData icon,
   }) {
-    return AnimatedBuilder(
-      animation: _floatController,
+    return ListenableBuilder(
+      listenable: _floatController,
       builder: (context, child) {
         final t = (_floatController.value + offsetPhase) % 1.0;
 
@@ -278,10 +291,8 @@ class _SplashScreenState extends State<SplashScreen>
         double opacity = 0.9;
 
         if (t <= 0.35) {
-          // Bob gently in place before sliding out
           dy = math.sin(t * math.pi * 4) * 6.0;
         } else {
-          // Slide rapidly out of the screen along the pointing direction like in-game!
           final progress = (t - 0.35) / 0.65;
           final curve = Curves.easeInCubic.transform(progress);
           final dist = curve * 700.0;
@@ -305,19 +316,22 @@ class _SplashScreenState extends State<SplashScreen>
             offset: Offset(dx, dy),
             child: Opacity(
               opacity: opacity.clamp(0.0, 1.0),
-              child: _buildLevelArrowCube(size, color, icon),
+              child: child,
             ),
           ),
         );
       },
+      child: _buildLevelArrowCube(size, color, icon),
     );
   }
 
   Widget _buildLevelArrowCube(double size, Color color, IconData icon) {
     final depthY = size * 0.18;
     final hsl = HSLColor.fromColor(color);
-    final darkerColor = hsl.withLightness((hsl.lightness * 0.72).clamp(0.0, 1.0)).toColor();
-    final lighterColor = hsl.withLightness((hsl.lightness * 1.15).clamp(0.0, 1.0)).toColor();
+    final darkerColor =
+        hsl.withLightness((hsl.lightness * 0.72).clamp(0.0, 1.0)).toColor();
+    final lighterColor =
+        hsl.withLightness((hsl.lightness * 1.15).clamp(0.0, 1.0)).toColor();
 
     return SizedBox(
       width: size,
@@ -329,8 +343,7 @@ class _SplashScreenState extends State<SplashScreen>
             top: depthY + 3,
             left: 2,
             right: 2,
-            child: Container(
-              height: size,
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
@@ -341,24 +354,25 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ],
               ),
+              child: SizedBox(height: size),
             ),
           ),
 
-          // 3D Depth Layer (Darker bottom side)
+          // 3D Depth Layer
           Positioned(
             top: depthY,
             left: 0,
             right: 0,
-            child: Container(
-              height: size,
+            child: DecoratedBox(
               decoration: BoxDecoration(
                 color: darkerColor,
                 borderRadius: BorderRadius.circular(16),
               ),
+              child: SizedBox(height: size),
             ),
           ),
 
-          // Main Face Layer (Gradient Clay Top)
+          // Main Face Layer
           Positioned(
             top: 0,
             left: 0,
@@ -369,22 +383,18 @@ class _SplashScreenState extends State<SplashScreen>
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    lighterColor,
-                    color,
-                  ],
+                  colors: [lighterColor, color],
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Stack(
                 children: [
-                  // Glossy top inner sheen highlight
+                  // Glossy top inner sheen
                   Positioned(
                     top: 0,
                     left: 0,
                     right: 0,
-                    child: Container(
-                      height: size * 0.42,
+                    child: DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(16),
@@ -398,6 +408,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ],
                         ),
                       ),
+                      child: SizedBox(height: size * 0.42),
                     ),
                   ),
                   // Direction Arrow Icon

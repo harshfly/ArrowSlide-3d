@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -9,9 +10,13 @@ import 'utils/audio_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
+
+  // Lock to portrait mode
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
+  // Set system UI styling
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -21,8 +26,16 @@ void main() async {
     ),
   );
 
+  // Initialize essential services before runApp
   final storageService = await StorageService.getInstance();
+
+  // Initialize audio in background (non-blocking)
   AudioService.instance.init();
+
+  // Disable debug logging in release
+  if (!kDebugMode) {
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
 
   runApp(
     Provider<StorageService>.value(

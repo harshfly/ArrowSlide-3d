@@ -168,7 +168,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 );
                               },
-                              child: Text('Reset', style: TextStyle(color: GameConfig.error)),
+                              child: const Text('Reset', style: TextStyle(color: GameConfig.error)),
                             ),
                           ],
                         ),
@@ -192,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.only(left: 8.0),
           child: Text(
             title.toUpperCase(),
-            style: TextStyle(
+            style: const TextStyle(
               color: GameConfig.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w700,
@@ -201,7 +201,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         const SizedBox(height: GameConfig.spacingSm),
-        Container(
+        DecoratedBox(
           decoration: BoxDecoration(
             color: GameConfig.surface,
             borderRadius: BorderRadius.circular(20),

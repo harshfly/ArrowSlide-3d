@@ -160,10 +160,10 @@ class _VictoryScreenState extends State<VictoryScreen>
                       decoration: BoxDecoration(
                         color: GameConfig.primary,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: GameConfig.cubeBlueSide, // Darker bottom edge
-                            offset: const Offset(0, 6),
+                            offset: Offset(0, 6),
                           ),
                         ],
                       ),

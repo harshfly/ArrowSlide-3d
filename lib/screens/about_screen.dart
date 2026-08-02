@@ -99,7 +99,7 @@ class AboutScreen extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: GameConfig.spacingMd),
-                            Divider(color: GameConfig.surfaceLight, thickness: 1.5),
+                            const Divider(color: GameConfig.surfaceLight, thickness: 1.5),
                             const SizedBox(height: GameConfig.spacingMd),
                             Text(
                               'Developed with ❤️ using Flutter',

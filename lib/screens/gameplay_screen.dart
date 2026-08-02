@@ -15,6 +15,12 @@ import '../widgets/arrow_block_widget.dart';
 import '../widgets/dotted_background.dart';
 
 /// Gameplay Screen — Dark space theme, time-based stars, glossy cubes, banner ads.
+///
+/// Production optimizations:
+/// - Separate [ListenableBuilder] for timer to avoid full-tree rebuilds
+/// - Cached [MediaQuery] values
+/// - Guard against double-win detection
+/// - Dispose-safe engine listener
 class GameplayScreen extends StatefulWidget {
   final int levelId;
   const GameplayScreen({super.key, required this.levelId});
@@ -25,16 +31,20 @@ class GameplayScreen extends StatefulWidget {
 
 class _GameplayScreenState extends State<GameplayScreen>
     with TickerProviderStateMixin {
-  late GameEngine _engine;
+  late final GameEngine _engine;
   bool _isLoading = true;
   String? _error;
   String? _highlightedBlockId;
   int _retryCount = 0;
+  bool _winHandled = false;
 
+  // Cached layout values
+  late double _screenWidth;
+  late double _screenHeight;
 
   // Shake animation
-  late AnimationController _shakeController;
-  late Animation<double> _shakeAnim;
+  late final AnimationController _shakeController;
+  late final Animation<double> _shakeAnim;
 
   @override
   void initState() {
@@ -42,7 +52,9 @@ class _GameplayScreenState extends State<GameplayScreen>
     _engine = GameEngine();
     _engine.addListener(_onEngineStateChanged);
     _shakeController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 350));
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
     _shakeAnim = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 0, end: 8), weight: 1),
       TweenSequenceItem(tween: Tween(begin: 8, end: -8), weight: 2),
@@ -51,6 +63,14 @@ class _GameplayScreenState extends State<GameplayScreen>
       TweenSequenceItem(tween: Tween(begin: -4, end: 0), weight: 1),
     ]).animate(_shakeController);
     _loadLevelData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final mq = MediaQuery.of(context);
+    _screenWidth = mq.size.width;
+    _screenHeight = mq.size.height;
   }
 
   @override
@@ -64,9 +84,11 @@ class _GameplayScreenState extends State<GameplayScreen>
   Future<void> _loadLevelData() async {
     try {
       final level = await LevelLoader.loadLevel(widget.levelId);
+      if (!mounted) return;
       _engine.loadLevel(level);
       setState(() => _isLoading = false);
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         _error = 'Failed to load level ${widget.levelId}';
@@ -75,12 +97,14 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _onEngineStateChanged() {
+    if (!mounted) return;
     if (_engine.invalidTapTriggered) {
       HapticFeedback.vibrate();
       AudioService.instance.playFailSound();
       _shakeController.forward(from: 0);
     }
-    if (_engine.isWon) {
+    if (_engine.isWon && !_winHandled) {
+      _winHandled = true;
       AudioService.instance.playWinSound();
       _onLevelWon();
     } else if (_engine.isFailed) {
@@ -93,11 +117,13 @@ class _GameplayScreenState extends State<GameplayScreen>
     await storage.completeLevel(
         widget.levelId, _engine.moveCount, _engine.starRating);
     if (!mounted) return;
-    // Show interstitial every 3 levels
+
+    // Show interstitial every N levels
     if (widget.levelId % GameConfig.interstitialFrequency == 0) {
       await AdService.instance.showInterstitialAd();
     }
     if (!mounted) return;
+
     Navigator.pushReplacementNamed(context, AppRouter.victory, arguments: {
       'levelId': widget.levelId,
       'moves': _engine.moveCount,
@@ -132,20 +158,23 @@ class _GameplayScreenState extends State<GameplayScreen>
                   color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
-                )
+                ),
               ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.heart_broken_rounded, color: GameConfig.danger, size: 40),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.heart_broken_rounded, color: GameConfig.danger, size: 56),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.heart_broken_rounded, color: GameConfig.danger, size: 40),
+                    Icon(Icons.heart_broken_rounded,
+                        color: GameConfig.danger, size: 40),
+                    SizedBox(width: 8),
+                    Icon(Icons.heart_broken_rounded,
+                        color: GameConfig.danger, size: 56),
+                    SizedBox(width: 8),
+                    Icon(Icons.heart_broken_rounded,
+                        color: GameConfig.danger, size: 40),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -159,18 +188,20 @@ class _GameplayScreenState extends State<GameplayScreen>
                   ),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                DecoratedBox(
                   decoration: BoxDecoration(
                     color: GameConfig.background,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Text(
-                    'Out of hearts!',
-                    style: TextStyle(
-                      color: GameConfig.textPrimary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Text(
+                      'Out of hearts!',
+                      style: TextStyle(
+                        color: GameConfig.textPrimary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -180,6 +211,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                     final rewarded = await AdService.instance.showHintAd();
                     if (rewarded) {
                       _engine.addLife();
+                      _winHandled = false; // Reset for potential future win
                       if (!mounted) return;
                       Navigator.pop(context);
                     }
@@ -190,17 +222,18 @@ class _GameplayScreenState extends State<GameplayScreen>
                     decoration: BoxDecoration(
                       color: GameConfig.success,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
                           color: GameConfig.cubeGreenSide,
-                          offset: const Offset(0, 6),
+                          offset: Offset(0, 6),
                         ),
                       ],
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.play_circle_filled_rounded, color: Colors.white, size: 24),
+                      children: [
+                        Icon(Icons.play_circle_filled_rounded,
+                            color: Colors.white, size: 24),
                         SizedBox(width: 8),
                         Text(
                           'WATCH AD FOR +1 LIFE',
@@ -218,6 +251,7 @@ class _GameplayScreenState extends State<GameplayScreen>
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
+                    _winHandled = false;
                     _engine.restart();
                   },
                   child: const Text(
@@ -246,12 +280,7 @@ class _GameplayScreenState extends State<GameplayScreen>
     if (success) {
       AudioService.instance.playSlideSound();
       HapticFeedback.mediumImpact();
-      // Block removal/animation is handled internally by GameEngine
-      if (_engine.isWon) {
-        AudioService.instance.playWinSound();
-        HapticFeedback.heavyImpact();
-        _onLevelWon();
-      }
+      // Win detection handled by _onEngineStateChanged to avoid double-fire
     } else {
       AudioService.instance.playTap();
       HapticFeedback.heavyImpact();
@@ -259,13 +288,13 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _showHint() async {
-    // Hints always require watching a rewarded ad
     final rewarded = await AdService.instance.showHintAd();
     if (rewarded && mounted) {
       final hintBlockId = _engine.getHintBlockId();
       if (hintBlockId != null) {
         setState(() => _highlightedBlockId = hintBlockId);
-        final hintBlock = _engine.blocks.where((b) => b.id == hintBlockId).firstOrNull;
+        final hintBlock =
+            _engine.blocks.where((b) => b.id == hintBlockId).firstOrNull;
         if (hintBlock != null && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
@@ -295,7 +324,8 @@ class _GameplayScreenState extends State<GameplayScreen>
               const CircularProgressIndicator(color: GameConfig.primary),
               const SizedBox(height: 16),
               Text('Loading Level ${widget.levelId}...',
-                  style: const TextStyle(color: Colors.white60, fontSize: 14)),
+                  style:
+                      const TextStyle(color: Colors.white60, fontSize: 14)),
             ],
           ),
         ),
@@ -307,7 +337,8 @@ class _GameplayScreenState extends State<GameplayScreen>
         body: Center(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             Text(_error!,
-                style: const TextStyle(color: GameConfig.error, fontSize: 16)),
+                style:
+                    const TextStyle(color: GameConfig.error, fontSize: 16)),
             const SizedBox(height: 16),
             ElevatedButton(
                 onPressed: () => Navigator.pop(context),
@@ -317,23 +348,21 @@ class _GameplayScreenState extends State<GameplayScreen>
       );
     }
 
-    final storage = Provider.of<StorageService>(context, listen: false);
-
     return Scaffold(
       backgroundColor: GameConfig.background,
       body: DottedBackground(
         child: SafeArea(
           child: Column(
             children: [
-              _buildTopBar(storage),
+              _buildTopBar(),
               Expanded(
                 child: Column(
                   children: [
                     Expanded(
-                      child: AnimatedBuilder(
-                        animation: _engine,
-                        builder: (context, _) => AnimatedBuilder(
-                          animation: _shakeAnim,
+                      child: ListenableBuilder(
+                        listenable: _engine,
+                        builder: (context, _) => ListenableBuilder(
+                          listenable: _shakeAnim,
                           builder: (context, child) => Transform.translate(
                             offset: Offset(_shakeAnim.value, 0),
                             child: child,
@@ -366,13 +395,13 @@ class _GameplayScreenState extends State<GameplayScreen>
     );
   }
 
-  Widget _buildTopBar(StorageService storage) {
+  Widget _buildTopBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Centered Title & Timer on the centre downside of the level no
+          // Centered Title & Timer
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -386,10 +415,10 @@ class _GameplayScreenState extends State<GameplayScreen>
                 ),
               ),
               const SizedBox(height: 4),
-              AnimatedBuilder(
-                animation: _engine,
-                builder: (context, _) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              // Timer — uses separate ListenableBuilder to avoid rebuilding entire top bar
+              ListenableBuilder(
+                listenable: _engine,
+                builder: (context, _) => DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
@@ -401,20 +430,25 @@ class _GameplayScreenState extends State<GameplayScreen>
                       ),
                     ],
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.timer_outlined, color: GameConfig.primary, size: 15),
-                      const SizedBox(width: 4),
-                      Text(
-                        _engine.elapsedFormatted,
-                        style: const TextStyle(
-                          color: GameConfig.textPrimary,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w900,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.timer_outlined,
+                            color: GameConfig.primary, size: 15),
+                        const SizedBox(width: 4),
+                        Text(
+                          _engine.elapsedFormatted,
+                          style: const TextStyle(
+                            color: GameConfig.textPrimary,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -427,8 +461,7 @@ class _GameplayScreenState extends State<GameplayScreen>
               // Back Button
               AnimatedScaleButton(
                 onTap: () => Navigator.pop(context),
-                child: Container(
-                  padding: const EdgeInsets.all(12),
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
@@ -440,14 +473,17 @@ class _GameplayScreenState extends State<GameplayScreen>
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.arrow_back, color: GameConfig.textPrimary, size: 22),
+                  child: const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Icon(Icons.arrow_back,
+                        color: GameConfig.textPrimary, size: 22),
+                  ),
                 ),
               ),
-              // Hearts (Lives)
-              AnimatedBuilder(
-                animation: _engine,
-                builder: (context, _) => Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              // Hearts (Lives) — separate ListenableBuilder
+              ListenableBuilder(
+                listenable: _engine,
+                builder: (context, _) => DecoratedBox(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -459,18 +495,28 @@ class _GameplayScreenState extends State<GameplayScreen>
                       ),
                     ],
                   ),
-                  child: Row(
-                    children: List.generate(3, (index) {
-                      final hasLife = index < _engine.lives;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
-                        child: Icon(
-                          hasLife ? Icons.favorite_rounded : Icons.heart_broken_rounded,
-                          color: hasLife ? GameConfig.danger : GameConfig.textMuted.withValues(alpha: 0.3),
-                          size: 20,
-                        ),
-                      );
-                    }),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    child: Row(
+                      children: List.generate(3, (index) {
+                        final hasLife = index < _engine.lives;
+                        return Padding(
+                          padding:
+                              const EdgeInsets.symmetric(horizontal: 2),
+                          child: Icon(
+                            hasLife
+                                ? Icons.favorite_rounded
+                                : Icons.heart_broken_rounded,
+                            color: hasLife
+                                ? GameConfig.danger
+                                : GameConfig.textMuted
+                                    .withValues(alpha: 0.3),
+                            size: 20,
+                          ),
+                        );
+                      }),
+                    ),
                   ),
                 ),
               ),
@@ -481,49 +527,45 @@ class _GameplayScreenState extends State<GameplayScreen>
     );
   }
 
-
-
   Widget _buildPuzzleArea() {
-    final screenWidth = MediaQuery.of(context).size.width - 24;
-    final screenHeight = MediaQuery.of(context).size.height - 320;
+    final availableWidth = _screenWidth - 24;
+    final availableHeight = _screenHeight - 320;
 
-    final cellW = screenWidth / _engine.gridWidth;
-    final cellH = screenHeight / _engine.gridHeight;
+    final cellW = availableWidth / _engine.gridWidth;
+    final cellH = availableHeight / _engine.gridHeight;
     final cellSize = (cellW < cellH ? cellW : cellH).clamp(30.0, 68.0);
 
     final boardW = _engine.gridWidth * cellSize;
     final boardH = _engine.gridHeight * cellSize;
 
-    return Container(
+    return SizedBox(
       width: boardW + 12,
       height: boardH + 12,
-      clipBehavior: Clip.none,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
-      padding: const EdgeInsets.all(6),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Active blocks
-          ..._engine.blocks.map((block) {
-            return AnimatedPositioned(
-              key: ValueKey(block.id),
-              duration: GameConfig.blockSlideDuration,
-              curve: GameConfig.blockSlideCurve,
-              left: block.x * cellSize,
-              top: block.y * cellSize,
-              child: RepaintBoundary(
-                child: ArrowBlockWidget(
-                  block: block,
-                  cellSize: cellSize,
-                  isHighlighted: _highlightedBlockId == block.id,
-                  onTap: () => _onBlockTapped(block),
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Active blocks
+            ..._engine.blocks.map((block) {
+              return AnimatedPositioned(
+                key: ValueKey(block.id),
+                duration: GameConfig.blockSlideDuration,
+                curve: GameConfig.blockSlideCurve,
+                left: block.x * cellSize,
+                top: block.y * cellSize,
+                child: RepaintBoundary(
+                  child: ArrowBlockWidget(
+                    block: block,
+                    cellSize: cellSize,
+                    isHighlighted: _highlightedBlockId == block.id,
+                    onTap: () => _onBlockTapped(block),
+                  ),
                 ),
-              ),
-            );
-          }),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -534,7 +576,7 @@ class _GameplayScreenState extends State<GameplayScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildToolbarButton(
+          _ToolbarButton(
             icon: Icons.undo_rounded,
             color: GameConfig.warning,
             label: 'UNDO',
@@ -547,17 +589,17 @@ class _GameplayScreenState extends State<GameplayScreen>
               }
             },
           ),
-          _buildToolbarButton(
+          _ToolbarButton(
             icon: Icons.refresh_rounded,
             color: GameConfig.primary,
             label: 'RESTART',
             onTap: () async {
               _retryCount++;
-              // Show interstitial on every N retries
               if (_retryCount % GameConfig.retryAdFrequency == 0) {
                 await AdService.instance.showInterstitialAd();
               }
               if (mounted) {
+                _winHandled = false;
                 setState(() {
                   _engine.restart();
                   _highlightedBlockId = null;
@@ -565,7 +607,7 @@ class _GameplayScreenState extends State<GameplayScreen>
               }
             },
           ),
-          _buildToolbarButton(
+          _ToolbarButton(
             icon: Icons.lightbulb_outline_rounded,
             color: GameConfig.warning,
             label: 'HINT',
@@ -576,14 +618,26 @@ class _GameplayScreenState extends State<GameplayScreen>
       ),
     );
   }
+}
 
-  Widget _buildToolbarButton({
-    required IconData icon,
-    required Color color,
-    required String label,
-    required VoidCallback onTap,
-    String? badge,
-  }) {
+/// Extracted toolbar button widget to avoid rebuilding all buttons on state changes.
+class _ToolbarButton extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+  final String? badge;
+
+  const _ToolbarButton({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.onTap,
+    this.badge,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return AnimatedScaleButton(
       onTap: onTap,
       child: Column(
@@ -592,9 +646,7 @@ class _GameplayScreenState extends State<GameplayScreen>
           Stack(
             clipBehavior: Clip.none,
             children: [
-              Container(
-                width: 64,
-                height: 64,
+              DecoratedBox(
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -606,24 +658,30 @@ class _GameplayScreenState extends State<GameplayScreen>
                     ),
                   ],
                 ),
-                child: Icon(icon, color: color, size: 32),
+                child: SizedBox(
+                  width: 64,
+                  height: 64,
+                  child: Icon(icon, color: color, size: 32),
+                ),
               ),
               if (badge != null)
                 Positioned(
                   top: -6,
                   right: -6,
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
+                  child: DecoratedBox(
                     decoration: const BoxDecoration(
                       color: GameConfig.danger,
                       shape: BoxShape.circle,
                     ),
-                    child: Text(
-                      badge,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                    child: Padding(
+                      padding: const EdgeInsets.all(6),
+                      child: Text(
+                        badge!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

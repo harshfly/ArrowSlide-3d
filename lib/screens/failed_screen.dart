@@ -148,9 +148,9 @@ class FailedScreen extends StatelessWidget {
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
-          BoxShadow(
+          const BoxShadow(
             color: GameConfig.cubeRedSide,
-            offset: const Offset(0, 8),
+            offset: Offset(0, 8),
           ),
         ],
       ),
