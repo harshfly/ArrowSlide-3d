@@ -41,8 +41,9 @@ class UserData {
 
   /// Returns the highest completed level ID.
   int get currentProgress {
-    if (starRatings.isEmpty) return 0;
-    return starRatings.keys.reduce((a, b) => a > b ? a : b);
+    final normalLevels = starRatings.keys.where((id) => id != 999);
+    if (normalLevels.isEmpty) return 0;
+    return normalLevels.reduce((a, b) => a > b ? a : b);
   }
 
   /// Check if daily reward is available today.
