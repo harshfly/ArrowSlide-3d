@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -144,6 +145,7 @@ class AdService {
       return false;
     }
 
+    final completer = Completer<bool>();
     bool rewarded = false;
 
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
@@ -152,6 +154,7 @@ class AdService {
         _rewardedAd = null;
         _isRewardedLoaded = false;
         _loadRewardedAd();
+        if (!completer.isCompleted) completer.complete(rewarded);
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         _debugLog('Rewarded show failed: $error');
@@ -159,6 +162,7 @@ class AdService {
         _rewardedAd = null;
         _isRewardedLoaded = false;
         _loadRewardedAd();
+        if (!completer.isCompleted) completer.complete(false);
       },
     );
 
@@ -168,12 +172,11 @@ class AdService {
           rewarded = true;
         },
       );
-      // Brief wait for callback to fire
-      await Future.delayed(const Duration(milliseconds: 500));
     } catch (e) {
       _debugLog('Rewarded show error: $e');
+      if (!completer.isCompleted) completer.complete(false);
     }
-    return rewarded;
+    return completer.future;
   }
 
   /// Show a rewarded ad for hint. Returns true if hint should be granted.
