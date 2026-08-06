@@ -171,7 +171,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                             mainAxisSpacing: 12,
                             childAspectRatio: 0.85,
                           ),
-                          itemCount: 20,
+                          itemCount: GameConfig.levelsPerChapter,
                           itemBuilder: (context, index) {
                             final levelId =
                                 (_selectedChapter * 50) + index + 1;
