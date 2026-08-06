@@ -31,6 +31,9 @@ void main() async {
 
   // Initialize audio in background (non-blocking)
   AudioService.instance.init();
+  // Apply saved audio settings
+  AudioService.instance.setMusicEnabled(storageService.userData.settings.musicEnabled);
+  AudioService.instance.setSoundEnabled(storageService.userData.settings.soundEnabled);
 
   // Disable debug logging in release
   if (!kDebugMode) {

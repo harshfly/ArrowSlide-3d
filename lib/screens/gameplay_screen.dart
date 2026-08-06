@@ -99,7 +99,10 @@ class _GameplayScreenState extends State<GameplayScreen>
   void _onEngineStateChanged() {
     if (!mounted) return;
     if (_engine.invalidTapTriggered) {
-      HapticFeedback.vibrate();
+      final storage = Provider.of<StorageService>(context, listen: false);
+      if (storage.userData.settings.vibrationEnabled) {
+        HapticFeedback.vibrate();
+      }
       AudioService.instance.playFailSound();
       _shakeController.forward(from: 0);
     }
@@ -273,17 +276,19 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _onBlockTapped(ArrowBlock block) {
-    HapticFeedback.lightImpact();
+    final storage = Provider.of<StorageService>(context, listen: false);
+    final vibEnabled = storage.userData.settings.vibrationEnabled;
+    if (vibEnabled) HapticFeedback.lightImpact();
     setState(() => _highlightedBlockId = null);
 
     final success = _engine.moveBlock(block.id);
     if (success) {
       AudioService.instance.playSlideSound();
-      HapticFeedback.mediumImpact();
+      if (vibEnabled) HapticFeedback.mediumImpact();
       // Win detection handled by _onEngineStateChanged to avoid double-fire
     } else {
       AudioService.instance.playTap();
-      HapticFeedback.heavyImpact();
+      if (vibEnabled) HapticFeedback.heavyImpact();
     }
   }
 

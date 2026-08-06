@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../config.dart';
 import '../utils/storage_service.dart';
+import '../utils/audio_service.dart';
 import '../models/user_data.dart';
 import '../widgets/animated_scale_button.dart';
 
@@ -39,6 +40,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       vibrationEnabled: _vibrationEnabled,
       darkTheme: _darkTheme,
     ));
+    // Apply audio settings at runtime
+    AudioService.instance.setMusicEnabled(_musicEnabled);
+    AudioService.instance.setSoundEnabled(_soundEnabled);
   }
 
   @override
