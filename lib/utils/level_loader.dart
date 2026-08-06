@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import '../config.dart';
 import '../models/level.dart';
 import 'daily_challenge_service.dart';
 
@@ -47,7 +48,7 @@ class LevelLoader {
 
     final List<Map<String, dynamic>> levelMetas = [];
 
-    for (int i = 1; i <= 100; i++) {
+    for (int i = 1; i <= GameConfig.totalLevels; i++) {
       try {
         final paddedId = i.toString().padLeft(3, '0');
         final jsonStr = await rootBundle.loadString(

@@ -1,26 +1,26 @@
 {
   "id": 2,
-  "gridWidth": 4,
-  "gridHeight": 4,
-  "parMoves": 5,
-  "threeStarSec": 10,
-  "twoStarSec": 20,
-  "timeLimitSeconds": 40,
+  "gridWidth": 3,
+  "gridHeight": 3,
+  "parMoves": 3,
+  "threeStarSec": 15,
+  "twoStarSec": 30,
+  "timeLimitSeconds": 60,
   "difficulty": "easy",
   "tiles": [],
   "blocks": [
     {
       "id": "a_1",
       "x": 0,
-      "y": 3,
+      "y": 1,
       "width": 1,
       "height": 1,
       "direction": "left"
     },
     {
       "id": "a_2",
-      "x": 3,
-      "y": 3,
+      "x": 2,
+      "y": 1,
       "width": 1,
       "height": 1,
       "direction": "left"
@@ -28,23 +28,7 @@
     {
       "id": "a_3",
       "x": 2,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_4",
-      "x": 3,
       "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_5",
-      "x": 3,
-      "y": 2,
       "width": 1,
       "height": 1,
       "direction": "right"

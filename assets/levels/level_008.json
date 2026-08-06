@@ -1,16 +1,40 @@
 {
   "id": 8,
-  "gridWidth": 5,
-  "gridHeight": 5,
-  "parMoves": 8,
-  "threeStarSec": 12,
-  "twoStarSec": 24,
-  "timeLimitSeconds": 48,
+  "gridWidth": 4,
+  "gridHeight": 4,
+  "parMoves": 6,
+  "threeStarSec": 20,
+  "twoStarSec": 40,
+  "timeLimitSeconds": 67,
   "difficulty": "easy",
   "tiles": [],
   "blocks": [
     {
       "id": "a_1",
+      "x": 2,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "left"
+    },
+    {
+      "id": "a_2",
+      "x": 1,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_3",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "direction": "down"
+    },
+    {
+      "id": "a_4",
       "x": 0,
       "y": 2,
       "width": 1,
@@ -18,60 +42,20 @@
       "direction": "left"
     },
     {
-      "id": "a_2",
-      "x": 3,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_3",
+      "id": "a_5",
       "x": 1,
       "y": 1,
       "width": 1,
       "height": 1,
-      "direction": "left"
-    },
-    {
-      "id": "a_4",
-      "x": 0,
-      "y": 1,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
-    },
-    {
-      "id": "a_5",
-      "x": 0,
-      "y": 3,
-      "width": 1,
-      "height": 1,
-      "direction": "up"
+      "direction": "right"
     },
     {
       "id": "a_6",
       "x": 1,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "right"
-    },
-    {
-      "id": "a_7",
-      "x": 2,
-      "y": 0,
-      "width": 1,
-      "height": 1,
-      "direction": "down"
-    },
-    {
-      "id": "a_8",
-      "x": 4,
       "y": 3,
       "width": 1,
       "height": 1,
-      "direction": "left"
+      "direction": "down"
     }
   ],
   "powerUps": []
