@@ -66,18 +66,7 @@ class GameEngine extends ChangeNotifier {
     _moveCount = 0;
     _score = 0;
 
-    int baseTime = 60;
-    switch (level.difficulty) {
-      case 'Easy':
-        baseTime = 45;
-      case 'Medium':
-        baseTime = 90;
-      case 'Hard':
-        baseTime = 120;
-      case 'Expert':
-        baseTime = 180;
-    }
-    _timeRemaining = baseTime;
+    _timeRemaining = level.timeLimitSeconds;
 
     _lives = 3;
     _isWon = false;
