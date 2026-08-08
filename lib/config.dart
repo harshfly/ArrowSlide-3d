@@ -19,10 +19,10 @@ class GameConfig {
       'Slide the glossy arrow cubes, solve the puzzles, and let every arrow escape!';
 
   // ─── AdMob IDs ──────────────────────────────
-  static const String admobAppId = 'ca-app-pub-3940256099942544~3347511713';
-  static const String bannerAdId = 'ca-app-pub-3940256099942544/6300978111';
-  static const String interstitialAdId = 'ca-app-pub-3940256099942544/1033173712';
-  static const String rewardedAdId = 'ca-app-pub-3940256099942544/5224354917';
+  static const String admobAppId = 'ca-app-pub-1400546699902881~2119770564';
+  static const String bannerAdId = 'ca-app-pub-1400546699902881/5049186235';
+  static const String interstitialAdId = 'ca-app-pub-1400546699902881/1246652539';
+  static const String rewardedAdId = 'ca-app-pub-1400546699902881/5716114654';
 
   // ─── Ad Behavior ──────────────────────────────────────────────────────
   static const int interstitialFrequency = 3;  // Show interstitial every N completed levels
