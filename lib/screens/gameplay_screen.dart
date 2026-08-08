@@ -37,6 +37,8 @@ class _GameplayScreenState extends State<GameplayScreen>
   String? _highlightedBlockId;
   int _retryCount = 0;
   bool _winHandled = false;
+  bool _isShowingGameOver = false;
+  bool _isProcessingTap = false;
 
   // Cached layout values
   late double _screenWidth;
@@ -137,11 +139,13 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _onLevelFailed() {
+    if (_isShowingGameOver) return;
+    _isShowingGameOver = true;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => _buildGameOverDialog(),
-    );
+    ).then((_) => _isShowingGameOver = false);
   }
 
   Widget _buildGameOverDialog() {
@@ -276,6 +280,8 @@ class _GameplayScreenState extends State<GameplayScreen>
   }
 
   void _onBlockTapped(ArrowBlock block) {
+    if (_isProcessingTap) return;
+    _isProcessingTap = true;
     final storage = Provider.of<StorageService>(context, listen: false);
     final vibEnabled = storage.userData.settings.vibrationEnabled;
     if (vibEnabled) HapticFeedback.lightImpact();
@@ -290,6 +296,10 @@ class _GameplayScreenState extends State<GameplayScreen>
       AudioService.instance.playTap();
       if (vibEnabled) HapticFeedback.heavyImpact();
     }
+    // Release tap lock after slide animation completes
+    Future.delayed(GameConfig.blockSlideDuration, () {
+      _isProcessingTap = false;
+    });
   }
 
   void _showHint() async {

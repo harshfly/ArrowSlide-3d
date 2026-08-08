@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen>
   late final AnimationController _logoController;
   late final Animation<double> _logoScale;
   late final Animation<Offset> _logoFloat;
+  bool _isNavigating = false;
 
   @override
   void initState() {
@@ -113,12 +114,14 @@ class _HomeScreenState extends State<HomeScreen>
                         color: GameConfig.primary,
                         depthColor: GameConfig.primaryDepth,
                         onTap: () {
+                          if (_isNavigating) return;
+                          _isNavigating = true;
                           Navigator.pushNamed(
                             context,
                             AppRouter.gameplay,
                             arguments: currentLevel.clamp(
                                 1, GameConfig.totalLevels),
-                          );
+                          ).then((_) => _isNavigating = false);
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -281,11 +284,10 @@ class _TopBarIconButton extends StatelessWidget {
             ),
           ],
         ),
-        child: const SizedBox(
+        child: SizedBox(
           width: 44,
           height: 44,
-          child: Icon(Icons.settings_rounded,
-              color: GameConfig.textPrimary, size: 22),
+          child: Icon(icon, color: GameConfig.textPrimary, size: 22),
         ),
       ),
     );

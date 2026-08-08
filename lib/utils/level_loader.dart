@@ -8,12 +8,13 @@ import 'daily_challenge_service.dart';
 /// Loads level JSON files from the assets folder with caching.
 ///
 /// Production optimizations:
-/// - LRU-style cache for loaded levels
+/// - LRU-style cache for loaded levels (capped at 20)
 /// - Level list metadata computed once and cached
 /// - Error handling with debug-only logging
 class LevelLoader {
   static final Map<int, Level> _cache = {};
   static List<Map<String, dynamic>>? _levelListCache;
+  static const int _maxCacheSize = 20;
 
   /// Load a single level by ID.
   static Future<Level> loadLevel(int levelId) async {
@@ -31,6 +32,11 @@ class LevelLoader {
       );
       final json = jsonDecode(jsonStr) as Map<String, dynamic>;
       final level = Level.fromJson(json);
+
+      // Evict oldest entry if cache is full
+      if (_cache.length >= _maxCacheSize) {
+        _cache.remove(_cache.keys.first);
+      }
       _cache[levelId] = level;
       return level;
     } catch (e) {
