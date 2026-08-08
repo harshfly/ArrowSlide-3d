@@ -17,8 +17,18 @@ class DailyChallengeService {
   static String getFormattedTodayDate() {
     final now = DateTime.now();
     const months = [
-      'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
-      'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'
+      'JANUARY',
+      'FEBRUARY',
+      'MARCH',
+      'APRIL',
+      'MAY',
+      'JUNE',
+      'JULY',
+      'AUGUST',
+      'SEPTEMBER',
+      'OCTOBER',
+      'NOVEMBER',
+      'DECEMBER',
     ];
     final monthStr = months[now.month - 1];
     return '$monthStr ${now.day}, ${now.year}';
@@ -74,7 +84,12 @@ class DailyChallengeService {
 
   // ─── Reverse-DAG Procedural Generator ──────────────────────────────────
   static List<Map<String, dynamic>> _buildDAGLevel(
-      int w, int h, int targetBlocks, int minDepth, Random rng) {
+    int w,
+    int h,
+    int targetBlocks,
+    int minDepth,
+    Random rng,
+  ) {
     final dirs = ['up', 'down', 'left', 'right'];
     final placed = <Map<String, dynamic>>[];
     final occupiedCells = <String>{};
@@ -84,7 +99,7 @@ class DailyChallengeService {
       'up' => (0, -1),
       'down' => (0, 1),
       'left' => (-1, 0),
-      _ => (1, 0)
+      _ => (1, 0),
     };
 
     bool inBounds(int x, int y) => x >= 0 && x < w && y >= 0 && y < h;
@@ -219,8 +234,14 @@ class DailyChallengeService {
     return placed;
   }
 
-  static bool _isSolvable(int w, int h, List<Map<String, dynamic>> initialBlocks) {
-    final current = initialBlocks.map((b) => Map<String, dynamic>.from(b)).toList();
+  static bool _isSolvable(
+    int w,
+    int h,
+    List<Map<String, dynamic>> initialBlocks,
+  ) {
+    final current = initialBlocks
+        .map((b) => Map<String, dynamic>.from(b))
+        .toList();
     while (current.isNotEmpty) {
       int found = -1;
       for (int i = 0; i < current.length; i++) {
@@ -235,12 +256,17 @@ class DailyChallengeService {
     return true;
   }
 
-  static bool _canExit(int w, int h, Map<String, dynamic> b, List<Map<String, dynamic>> all) {
+  static bool _canExit(
+    int w,
+    int h,
+    Map<String, dynamic> b,
+    List<Map<String, dynamic>> all,
+  ) {
     (int, int) delta(String d) => switch (d) {
       'up' => (0, -1),
       'down' => (0, 1),
       'left' => (-1, 0),
-      _ => (1, 0)
+      _ => (1, 0),
     };
     final (dx, dy) = delta(b['direction'] as String);
     int cx = (b['x'] as int) + dx;

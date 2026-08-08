@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../config.dart';
 import '../utils/app_router.dart';
 import '../utils/ad_service.dart';
+import '../utils/audio_service.dart';
+import 'package:share_plus/share_plus.dart';
 import '../utils/storage_service.dart';
 import '../widgets/dotted_background.dart';
 import '../widgets/clay_button.dart';
@@ -38,12 +40,13 @@ class _HomeScreenState extends State<HomeScreen>
       CurvedAnimation(parent: _logoController, curve: Curves.easeInOutSine),
     );
 
-    _logoFloat = Tween<Offset>(
-      begin: const Offset(0, -6),
-      end: const Offset(0, 6),
-    ).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeInOutSine),
-    );
+    _logoFloat =
+        Tween<Offset>(
+          begin: const Offset(0, -6),
+          end: const Offset(0, 6),
+        ).animate(
+          CurvedAnimation(parent: _logoController, curve: Curves.easeInOutSine),
+        );
   }
 
   @override
@@ -57,6 +60,7 @@ class _HomeScreenState extends State<HomeScreen>
     final storage = Provider.of<StorageService>(context);
     final userData = storage.userData;
     final currentLevel = userData.currentProgress + 1;
+    final settings = userData.settings;
 
     return Scaffold(
       backgroundColor: GameConfig.backgroundDark,
@@ -66,8 +70,10 @@ class _HomeScreenState extends State<HomeScreen>
             children: [
               // Top Navigation Bar
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     // Settings Gear
@@ -120,14 +126,19 @@ class _HomeScreenState extends State<HomeScreen>
                             context,
                             AppRouter.gameplay,
                             arguments: currentLevel.clamp(
-                                1, GameConfig.totalLevels),
+                              1,
+                              GameConfig.totalLevels,
+                            ),
                           ).then((_) => _isNavigating = false);
                         },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.play_arrow_rounded,
-                                color: Colors.white, size: 32),
+                            Icon(
+                              Icons.play_arrow_rounded,
+                              color: Colors.white,
+                              size: 32,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'PLAY',
@@ -147,13 +158,16 @@ class _HomeScreenState extends State<HomeScreen>
                       ClayButton(
                         color: GameConfig.secondary,
                         depthColor: GameConfig.secondaryDepth,
-                        onTap: () => Navigator.pushNamed(
-                            context, AppRouter.levelSelect),
+                        onTap: () =>
+                            Navigator.pushNamed(context, AppRouter.levelSelect),
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.grid_view_rounded,
-                                color: Colors.white, size: 24),
+                            Icon(
+                              Icons.grid_view_rounded,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                             SizedBox(width: 10),
                             Text(
                               'LEVELS',
@@ -184,8 +198,11 @@ class _HomeScreenState extends State<HomeScreen>
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.calendar_month_rounded,
-                                color: Colors.white, size: 24),
+                            Icon(
+                              Icons.calendar_month_rounded,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                             SizedBox(width: 10),
                             Text(
                               'DAILY CHALLENGE',
@@ -209,7 +226,9 @@ class _HomeScreenState extends State<HomeScreen>
                               icon: Icons.settings_rounded,
                               label: 'SETTINGS',
                               onTap: () => Navigator.pushNamed(
-                                  context, AppRouter.settings),
+                                context,
+                                AppRouter.settings,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -217,8 +236,8 @@ class _HomeScreenState extends State<HomeScreen>
                             child: _SecondaryPillButton(
                               icon: Icons.info_outline_rounded,
                               label: 'ABOUT',
-                              onTap: () => Navigator.pushNamed(
-                                  context, AppRouter.about),
+                              onTap: () =>
+                                  Navigator.pushNamed(context, AppRouter.about),
                             ),
                           ),
                         ],
@@ -230,18 +249,46 @@ class _HomeScreenState extends State<HomeScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           _SquareIconButton(
-                            icon: Icons.music_note_rounded,
-                            onTap: () {},
+                            icon: settings.musicEnabled
+                                ? Icons.music_note_rounded
+                                : Icons.music_off_rounded,
+                            onTap: () {
+                              setState(() {
+                                final newSettings = settings.copyWith(
+                                  musicEnabled: !settings.musicEnabled,
+                                );
+                                storage.updateSettings(newSettings);
+                                AudioService.instance.setMusicEnabled(
+                                  newSettings.musicEnabled,
+                                );
+                              });
+                            },
                           ),
                           const SizedBox(width: 16),
                           _SquareIconButton(
-                            icon: Icons.volume_up_rounded,
-                            onTap: () {},
+                            icon: settings.soundEnabled
+                                ? Icons.volume_up_rounded
+                                : Icons.volume_off_rounded,
+                            onTap: () {
+                              setState(() {
+                                final newSettings = settings.copyWith(
+                                  soundEnabled: !settings.soundEnabled,
+                                );
+                                storage.updateSettings(newSettings);
+                                AudioService.instance.setSoundEnabled(
+                                  newSettings.soundEnabled,
+                                );
+                              });
+                            },
                           ),
                           const SizedBox(width: 16),
                           _SquareIconButton(
                             icon: Icons.share_rounded,
-                            onTap: () {},
+                            onTap: () {
+                              Share.share(
+                                'Check out ArrowSlide 3D! The most addictive puzzle game. Download now!',
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -324,8 +371,7 @@ class _LevelBadge extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded,
-                color: GameConfig.warning, size: 20),
+            const Icon(Icons.star_rounded, color: GameConfig.warning, size: 20),
             const SizedBox(width: 8),
             Text(
               'LEVEL $level',

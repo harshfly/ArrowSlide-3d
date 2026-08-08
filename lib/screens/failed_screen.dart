@@ -24,13 +24,18 @@ class FailedScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: GameConfig.spacingXl),
+            padding: const EdgeInsets.symmetric(
+              horizontal: GameConfig.spacingXl,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Banner title
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: GameConfig.danger,
                     borderRadius: BorderRadius.circular(24),
@@ -41,7 +46,10 @@ class FailedScreen extends StatelessWidget {
                         offset: const Offset(0, 6),
                       ),
                     ],
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
                   ),
                   child: const Text(
                     'LEVEL STUCK!',
@@ -65,20 +73,27 @@ class FailedScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: GameConfig.surface,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: GameConfig.surfaceLight, width: 1.5),
+                    border: Border.all(
+                      color: GameConfig.surfaceLight,
+                      width: 1.5,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
-                      )
+                      ),
                     ],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       _buildStatColumn('MOVES', '$moves'),
-                      Container(width: 1.5, height: 36, color: GameConfig.surfaceLight),
+                      Container(
+                        width: 1.5,
+                        height: 36,
+                        color: GameConfig.surfaceLight,
+                      ),
                       _buildStatColumn('BEST', '$bestMoves'),
                     ],
                   ),
@@ -92,7 +107,8 @@ class FailedScreen extends StatelessWidget {
                   icon: Icons.refresh_rounded,
                   color: GameConfig.primary,
                   onTap: () => Navigator.pushReplacementNamed(
-                    context, AppRouter.gameplay,
+                    context,
+                    AppRouter.gameplay,
                     arguments: levelId,
                   ),
                 ),
@@ -108,7 +124,8 @@ class FailedScreen extends StatelessWidget {
                     final rewarded = await AdService.instance.showHintAd();
                     if (rewarded && context.mounted) {
                       Navigator.pushReplacementNamed(
-                        context, AppRouter.gameplay,
+                        context,
+                        AppRouter.gameplay,
                         arguments: levelId,
                       );
                     }
@@ -123,7 +140,8 @@ class FailedScreen extends StatelessWidget {
                   icon: Icons.home_rounded,
                   color: GameConfig.surfaceLight,
                   onTap: () => Navigator.pushNamedAndRemoveUntil(
-                    context, AppRouter.home,
+                    context,
+                    AppRouter.home,
                     (route) => false,
                   ),
                 ),
@@ -148,10 +166,7 @@ class FailedScreen extends StatelessWidget {
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
-          const BoxShadow(
-            color: GameConfig.cubeRedSide,
-            offset: Offset(0, 8),
-          ),
+          const BoxShadow(color: GameConfig.cubeRedSide, offset: Offset(0, 8)),
         ],
       ),
       child: Center(
@@ -161,16 +176,34 @@ class FailedScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(width: 12, height: 12, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
                 const SizedBox(width: 24),
-                Container(width: 12, height: 12, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
             // Sad mouth curve
             Transform.rotate(
               angle: 3.1416,
-              child: const Icon(Icons.sentiment_satisfied_alt_rounded, color: Colors.white, size: 36),
+              child: const Icon(
+                Icons.sentiment_satisfied_alt_rounded,
+                color: Colors.white,
+                size: 36,
+              ),
             ),
           ],
         ),
@@ -181,9 +214,24 @@ class FailedScreen extends StatelessWidget {
   Widget _buildStatColumn(String label, String value) {
     return Column(
       children: [
-        Text(label, style: const TextStyle(color: GameConfig.textMuted, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 1)),
+        Text(
+          label,
+          style: const TextStyle(
+            color: GameConfig.textMuted,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1,
+          ),
+        ),
         const SizedBox(height: 6),
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w800)),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ],
     );
   }
@@ -208,7 +256,7 @@ class FailedScreen extends StatelessWidget {
               color: color.withValues(alpha: 0.4),
               blurRadius: 12,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Row(

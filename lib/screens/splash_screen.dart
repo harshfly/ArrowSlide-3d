@@ -39,13 +39,15 @@ class _SplashScreenState extends State<SplashScreen>
 
     _fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-          parent: _controller,
-          curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
+        parent: _controller,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOut),
+      ),
     );
     _scale = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(
-          parent: _controller,
-          curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack)),
+        parent: _controller,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack),
+      ),
     );
     _controller.forward();
 
@@ -59,8 +61,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      final hasInternet =
-          !connectivityResult.contains(ConnectivityResult.none);
+      final hasInternet = !connectivityResult.contains(ConnectivityResult.none);
 
       if (!hasInternet) {
         if (mounted) {
@@ -122,10 +123,7 @@ class _SplashScreenState extends State<SplashScreen>
               builder: (context, child) {
                 return Opacity(
                   opacity: _fadeIn.value,
-                  child: Transform.scale(
-                    scale: _scale.value,
-                    child: child,
-                  ),
+                  child: Transform.scale(scale: _scale.value, child: child),
                 );
               },
               child: Column(
@@ -142,12 +140,11 @@ class _SplashScreenState extends State<SplashScreen>
                   // Progress bar
                   Text(
                     'LOADING...',
-                    style:
-                        Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: Colors.white70,
-                              letterSpacing: 2,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: Colors.white70,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
@@ -173,8 +170,9 @@ class _SplashScreenState extends State<SplashScreen>
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
-                                  color: GameConfig.primary
-                                      .withValues(alpha: 0.5),
+                                  color: GameConfig.primary.withValues(
+                                    alpha: 0.5,
+                                  ),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -189,9 +187,9 @@ class _SplashScreenState extends State<SplashScreen>
                   Text(
                     '${(_loadProgress * 100).toInt()}%',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -205,9 +203,9 @@ class _SplashScreenState extends State<SplashScreen>
               padding: const EdgeInsets.only(bottom: 24.0),
               child: Text(
                 'v${GameConfig.appVersion}',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white38,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.white38),
               ),
             ),
           ),
@@ -219,49 +217,63 @@ class _SplashScreenState extends State<SplashScreen>
   List<Widget> _buildFloatingCubes() {
     return [
       _positionedArrow(
-        top: 80, left: 30, size: 54,
+        top: 80,
+        left: 30,
+        size: 54,
         color: GameConfig.primary,
         direction: 'up',
         offsetPhase: 0.0,
         icon: Icons.arrow_upward_rounded,
       ),
       _positionedArrow(
-        top: 160, right: 35, size: 58,
+        top: 160,
+        right: 35,
+        size: 58,
         color: GameConfig.danger,
         direction: 'right',
         offsetPhase: 0.15,
         icon: Icons.arrow_forward_rounded,
       ),
       _positionedArrow(
-        bottom: 150, left: 45, size: 62,
+        bottom: 150,
+        left: 45,
+        size: 62,
         color: GameConfig.purple,
         direction: 'down',
         offsetPhase: 0.30,
         icon: Icons.arrow_downward_rounded,
       ),
       _positionedArrow(
-        bottom: 230, right: 50, size: 52,
+        bottom: 230,
+        right: 50,
+        size: 52,
         color: GameConfig.accent,
         direction: 'left',
         offsetPhase: 0.45,
         icon: Icons.arrow_back_rounded,
       ),
       _positionedArrow(
-        top: 300, left: 75, size: 56,
+        top: 300,
+        left: 75,
+        size: 56,
         color: GameConfig.secondary,
         direction: 'up',
         offsetPhase: 0.60,
         icon: Icons.arrow_upward_rounded,
       ),
       _positionedArrow(
-        bottom: 320, right: 35, size: 54,
+        bottom: 320,
+        right: 35,
+        size: 54,
         color: GameConfig.primary,
         direction: 'right',
         offsetPhase: 0.75,
         icon: Icons.arrow_forward_rounded,
       ),
       _positionedArrow(
-        top: 220, left: 140, size: 50,
+        top: 220,
+        left: 140,
+        size: 50,
         color: GameConfig.warning,
         direction: 'left',
         offsetPhase: 0.85,
@@ -314,10 +326,7 @@ class _SplashScreenState extends State<SplashScreen>
           right: right,
           child: Transform.translate(
             offset: Offset(dx, dy),
-            child: Opacity(
-              opacity: opacity.clamp(0.0, 1.0),
-              child: child,
-            ),
+            child: Opacity(opacity: opacity.clamp(0.0, 1.0), child: child),
           ),
         );
       },
@@ -328,10 +337,12 @@ class _SplashScreenState extends State<SplashScreen>
   Widget _buildLevelArrowCube(double size, Color color, IconData icon) {
     final depthY = size * 0.18;
     final hsl = HSLColor.fromColor(color);
-    final darkerColor =
-        hsl.withLightness((hsl.lightness * 0.72).clamp(0.0, 1.0)).toColor();
-    final lighterColor =
-        hsl.withLightness((hsl.lightness * 1.15).clamp(0.0, 1.0)).toColor();
+    final darkerColor = hsl
+        .withLightness((hsl.lightness * 0.72).clamp(0.0, 1.0))
+        .toColor();
+    final lighterColor = hsl
+        .withLightness((hsl.lightness * 1.15).clamp(0.0, 1.0))
+        .toColor();
 
     return SizedBox(
       width: size,
@@ -413,11 +424,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   // Direction Arrow Icon
                   Center(
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: size * 0.55,
-                    ),
+                    child: Icon(icon, color: Colors.white, size: size * 0.55),
                   ),
                 ],
               ),

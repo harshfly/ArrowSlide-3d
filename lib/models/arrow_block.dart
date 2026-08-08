@@ -61,17 +61,17 @@ class ArrowBlock {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'x': x,
-        'y': y,
-        if (width > 1) 'width': width,
-        if (height > 1) 'height': height,
-        'direction': direction.name,
-        if (isRotatable) 'rotatable': true,
-        if (isHidden) 'hidden': true,
-        if (isKey) 'isKey': true,
-        if (isPlayer) 'isPlayer': true,
-      };
+    'id': id,
+    'x': x,
+    'y': y,
+    if (width > 1) 'width': width,
+    if (height > 1) 'height': height,
+    'direction': direction.name,
+    if (isRotatable) 'rotatable': true,
+    if (isHidden) 'hidden': true,
+    if (isKey) 'isKey': true,
+    if (isPlayer) 'isPlayer': true,
+  };
 
   ArrowBlock copyWith({
     String? id,
@@ -109,31 +109,44 @@ enum Direction {
 
   static Direction fromString(String value) {
     switch (value) {
-      case 'up': return Direction.up;
-      case 'down': return Direction.down;
-      case 'left': return Direction.left;
-      case 'right': return Direction.right;
-      default: return Direction.up;
+      case 'up':
+        return Direction.up;
+      case 'down':
+        return Direction.down;
+      case 'left':
+        return Direction.left;
+      case 'right':
+        return Direction.right;
+      default:
+        return Direction.up;
     }
   }
 
   /// Returns the offset delta for this direction.
   (int dx, int dy) get delta {
     switch (this) {
-      case Direction.up: return (0, -1);
-      case Direction.down: return (0, 1);
-      case Direction.left: return (-1, 0);
-      case Direction.right: return (1, 0);
+      case Direction.up:
+        return (0, -1);
+      case Direction.down:
+        return (0, 1);
+      case Direction.left:
+        return (-1, 0);
+      case Direction.right:
+        return (1, 0);
     }
   }
 
   /// Returns the rotated direction (90° clockwise).
   Direction get rotatedCW {
     switch (this) {
-      case Direction.up: return Direction.right;
-      case Direction.right: return Direction.down;
-      case Direction.down: return Direction.left;
-      case Direction.left: return Direction.up;
+      case Direction.up:
+        return Direction.right;
+      case Direction.right:
+        return Direction.down;
+      case Direction.down:
+        return Direction.left;
+      case Direction.left:
+        return Direction.up;
     }
   }
 }

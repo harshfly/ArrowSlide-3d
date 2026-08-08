@@ -120,7 +120,10 @@ class _GameplayScreenState extends State<GameplayScreen>
   Future<void> _onLevelWon() async {
     final storage = Provider.of<StorageService>(context, listen: false);
     await storage.completeLevel(
-        widget.levelId, _engine.moveCount, _engine.starRating);
+      widget.levelId,
+      _engine.moveCount,
+      _engine.starRating,
+    );
     if (!mounted) return;
 
     // Show interstitial every N levels
@@ -129,13 +132,17 @@ class _GameplayScreenState extends State<GameplayScreen>
     }
     if (!mounted) return;
 
-    Navigator.pushReplacementNamed(context, AppRouter.victory, arguments: {
-      'levelId': widget.levelId,
-      'moves': _engine.moveCount,
-      'stars': _engine.starRating,
-      'bestMoves': _engine.moveCount,
-      'elapsedSec': _engine.elapsedSeconds,
-    });
+    Navigator.pushReplacementNamed(
+      context,
+      AppRouter.victory,
+      arguments: {
+        'levelId': widget.levelId,
+        'moves': _engine.moveCount,
+        'stars': _engine.starRating,
+        'bestMoves': _engine.moveCount,
+        'elapsedSec': _engine.elapsedSeconds,
+      },
+    );
   }
 
   void _onLevelFailed() {
@@ -174,14 +181,23 @@ class _GameplayScreenState extends State<GameplayScreen>
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.heart_broken_rounded,
-                        color: GameConfig.danger, size: 40),
+                    Icon(
+                      Icons.heart_broken_rounded,
+                      color: GameConfig.danger,
+                      size: 40,
+                    ),
                     SizedBox(width: 8),
-                    Icon(Icons.heart_broken_rounded,
-                        color: GameConfig.danger, size: 56),
+                    Icon(
+                      Icons.heart_broken_rounded,
+                      color: GameConfig.danger,
+                      size: 56,
+                    ),
                     SizedBox(width: 8),
-                    Icon(Icons.heart_broken_rounded,
-                        color: GameConfig.danger, size: 40),
+                    Icon(
+                      Icons.heart_broken_rounded,
+                      color: GameConfig.danger,
+                      size: 40,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -239,8 +255,11 @@ class _GameplayScreenState extends State<GameplayScreen>
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.play_circle_filled_rounded,
-                            color: Colors.white, size: 24),
+                        Icon(
+                          Icons.play_circle_filled_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'WATCH AD FOR +1 LIFE',
@@ -308,22 +327,28 @@ class _GameplayScreenState extends State<GameplayScreen>
       final hintBlockId = _engine.getHintBlockId();
       if (hintBlockId != null) {
         setState(() => _highlightedBlockId = hintBlockId);
-        final hintBlock =
-            _engine.blocks.where((b) => b.id == hintBlockId).firstOrNull;
+        final hintBlock = _engine.blocks
+            .where((b) => b.id == hintBlockId)
+            .firstOrNull;
         if (hintBlock != null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                '💡 Tap the ${hintBlock.direction.name.toUpperCase()} arrow!'),
-            backgroundColor: GameConfig.accent,
-            duration: const Duration(seconds: 2),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '💡 Tap the ${hintBlock.direction.name.toUpperCase()} arrow!',
+              ),
+              backgroundColor: GameConfig.accent,
+              duration: const Duration(seconds: 2),
+            ),
+          );
         }
       }
     } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Watch an ad to get a hint!'),
-        backgroundColor: GameConfig.danger,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Watch an ad to get a hint!'),
+          backgroundColor: GameConfig.danger,
+        ),
+      );
     }
   }
 
@@ -338,9 +363,10 @@ class _GameplayScreenState extends State<GameplayScreen>
             children: [
               const CircularProgressIndicator(color: GameConfig.primary),
               const SizedBox(height: 16),
-              Text('Loading Level ${widget.levelId}...',
-                  style:
-                      const TextStyle(color: Colors.white60, fontSize: 14)),
+              Text(
+                'Loading Level ${widget.levelId}...',
+                style: const TextStyle(color: Colors.white60, fontSize: 14),
+              ),
             ],
           ),
         ),
@@ -350,15 +376,20 @@ class _GameplayScreenState extends State<GameplayScreen>
       return Scaffold(
         backgroundColor: GameConfig.backgroundDark,
         body: Center(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text(_error!,
-                style:
-                    const TextStyle(color: GameConfig.error, fontSize: 16)),
-            const SizedBox(height: 16),
-            ElevatedButton(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _error!,
+                style: const TextStyle(color: GameConfig.error, fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('BACK')),
-          ]),
+                child: const Text('BACK'),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -447,12 +478,17 @@ class _GameplayScreenState extends State<GameplayScreen>
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.timer_outlined,
-                            color: GameConfig.primary, size: 15),
+                        const Icon(
+                          Icons.timer_outlined,
+                          color: GameConfig.primary,
+                          size: 15,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           _engine.elapsedFormatted,
@@ -490,8 +526,11 @@ class _GameplayScreenState extends State<GameplayScreen>
                   ),
                   child: const Padding(
                     padding: EdgeInsets.all(12),
-                    child: Icon(Icons.arrow_back,
-                        color: GameConfig.textPrimary, size: 22),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: GameConfig.textPrimary,
+                      size: 22,
+                    ),
                   ),
                 ),
               ),
@@ -512,21 +551,21 @@ class _GameplayScreenState extends State<GameplayScreen>
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 8),
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     child: Row(
                       children: List.generate(3, (index) {
                         final hasLife = index < _engine.lives;
                         return Padding(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
                           child: Icon(
                             hasLife
                                 ? Icons.favorite_rounded
                                 : Icons.heart_broken_rounded,
                             color: hasLife
                                 ? GameConfig.danger
-                                : GameConfig.textMuted
-                                    .withValues(alpha: 0.3),
+                                : GameConfig.textMuted.withValues(alpha: 0.3),
                             size: 20,
                           ),
                         );

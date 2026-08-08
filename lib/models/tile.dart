@@ -25,13 +25,18 @@ class Tile {
   }
 
   Map<String, dynamic> toJson() => {
-        'x': x,
-        'y': y,
-        'type': type.name,
-        if (metadata.isNotEmpty) 'metadata': metadata,
-      };
+    'x': x,
+    'y': y,
+    'type': type.name,
+    if (metadata.isNotEmpty) 'metadata': metadata,
+  };
 
-  Tile copyWith({int? x, int? y, TileType? type, Map<String, dynamic>? metadata}) {
+  Tile copyWith({
+    int? x,
+    int? y,
+    TileType? type,
+    Map<String, dynamic>? metadata,
+  }) {
     return Tile(
       x: x ?? this.x,
       y: y ?? this.y,
@@ -56,17 +61,28 @@ enum TileType {
 
   static TileType fromString(String value) {
     switch (value) {
-      case 'empty': return TileType.empty;
-      case 'floor': return TileType.floor;
-      case 'wall': return TileType.wall;
-      case 'ice': return TileType.ice;
-      case 'teleporter': return TileType.teleporter;
-      case 'portal': return TileType.portal;
-      case 'oneWayGate': return TileType.oneWayGate;
-      case 'switch': return TileType.switchTile;
-      case 'lock': return TileType.lock;
-      case 'exit': return TileType.exit;
-      default: return TileType.floor;
+      case 'empty':
+        return TileType.empty;
+      case 'floor':
+        return TileType.floor;
+      case 'wall':
+        return TileType.wall;
+      case 'ice':
+        return TileType.ice;
+      case 'teleporter':
+        return TileType.teleporter;
+      case 'portal':
+        return TileType.portal;
+      case 'oneWayGate':
+        return TileType.oneWayGate;
+      case 'switch':
+        return TileType.switchTile;
+      case 'lock':
+        return TileType.lock;
+      case 'exit':
+        return TileType.exit;
+      default:
+        return TileType.floor;
     }
   }
 }

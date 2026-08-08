@@ -32,22 +32,22 @@ class _VictoryScreenState extends State<VictoryScreen>
     return widget.stars;
   }
 
-
-
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 3),
+    );
     _controller = AnimationController(
       vsync: this,
       duration: GameConfig.starAnimationDuration,
     );
-    
+
     // Play stars animation with haptics
     _controller.addListener(() {
       // Simulate popping effect on star intervals (roughly 0.33, 0.66, 1.0)
     });
-    
+
     _controller.forward().then((_) {
       if (_starCount == 3) {
         _confettiController.play();
@@ -73,119 +73,139 @@ class _VictoryScreenState extends State<VictoryScreen>
         alignment: Alignment.topCenter,
         children: [
           SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(32),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 10),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 48,
                   ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Stars
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildStar(0, 48, -10),
-                      _buildStar(1, 64, -20),
-                      _buildStar(2, 48, -10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 20,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 10),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 32),
-                  // Title
-                  Text(
-                    widget.levelId == 999 ? 'DAILY CHALLENGE\nCLEARED!' : 'LEVEL CLEARED!',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: GameConfig.danger,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // Perfect Clear Pill
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: GameConfig.success.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _starCount == 3 ? Icons.check_circle_rounded : Icons.star_rounded, 
-                          color: _starCount == 3 ? GameConfig.success : GameConfig.warning, 
-                          size: 20
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          _starCount == 3 ? 'Perfect Clear' : 'Cleared',
-                          style: TextStyle(
-                            color: _starCount == 3 ? GameConfig.success : GameConfig.warning,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 48),
-                  AnimatedScaleButton(
-                    onTap: () {
-                      if (widget.levelId == 999) {
-                        Navigator.pushReplacementNamed(context, AppRouter.home);
-                      } else {
-                        Navigator.pushReplacementNamed(
-                          context,
-                          AppRouter.gameplay,
-                          arguments: widget.levelId + 1,
-                        );
-                      }
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        color: GameConfig.primary,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: GameConfig.cubeBlueSide, // Darker bottom edge
-                            offset: Offset(0, 6),
-                          ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Stars
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildStar(0, 48, -10),
+                          _buildStar(1, 64, -20),
+                          _buildStar(2, 48, -10),
                         ],
                       ),
-                      child: Center(
-                        child: Text(
-                          widget.levelId == 999 ? 'BACK TO HOME' : 'NEXT LEVEL',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 1.0,
+                      const SizedBox(height: 32),
+                      // Title
+                      Text(
+                        widget.levelId == 999
+                            ? 'DAILY CHALLENGE\nCLEARED!'
+                            : 'LEVEL CLEARED!',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: GameConfig.danger,
+                          fontSize: 26,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Perfect Clear Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: GameConfig.success.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _starCount == 3
+                                  ? Icons.check_circle_rounded
+                                  : Icons.star_rounded,
+                              color: _starCount == 3
+                                  ? GameConfig.success
+                                  : GameConfig.warning,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _starCount == 3 ? 'Perfect Clear' : 'Cleared',
+                              style: TextStyle(
+                                color: _starCount == 3
+                                    ? GameConfig.success
+                                    : GameConfig.warning,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 48),
+                      AnimatedScaleButton(
+                        onTap: () {
+                          if (widget.levelId == 999) {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRouter.home,
+                            );
+                          } else {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRouter.gameplay,
+                              arguments: widget.levelId + 1,
+                            );
+                          }
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: GameConfig.primary,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: GameConfig
+                                    .cubeBlueSide, // Darker bottom edge
+                                offset: Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.levelId == 999
+                                  ? 'BACK TO HOME'
+                                  : 'NEXT LEVEL',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.0,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
           ConfettiWidget(
             confettiController: _confettiController,
             blastDirectionality: BlastDirectionality.explosive,
@@ -194,7 +214,12 @@ class _VictoryScreenState extends State<VictoryScreen>
             gravity: 0.3,
             minimumSize: const Size(8, 4),
             maximumSize: const Size(15, 8),
-            colors: const [GameConfig.primary, GameConfig.danger, GameConfig.warning, GameConfig.success],
+            colors: const [
+              GameConfig.primary,
+              GameConfig.danger,
+              GameConfig.warning,
+              GameConfig.success,
+            ],
           ),
         ],
       ),

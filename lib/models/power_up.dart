@@ -24,13 +24,19 @@ class PowerUp {
   }
 
   Map<String, dynamic> toJson() => {
-        'type': type.name,
-        'x': x,
-        'y': y,
-        if (metadata.isNotEmpty) 'metadata': metadata,
-      };
+    'type': type.name,
+    'x': x,
+    'y': y,
+    if (metadata.isNotEmpty) 'metadata': metadata,
+  };
 
-  PowerUp copyWith({PowerUpType? type, int? x, int? y, Map<String, dynamic>? metadata, bool? isActive}) {
+  PowerUp copyWith({
+    PowerUpType? type,
+    int? x,
+    int? y,
+    Map<String, dynamic>? metadata,
+    bool? isActive,
+  }) {
     return PowerUp(
       type: type ?? this.type,
       x: x ?? this.x,
@@ -53,15 +59,24 @@ enum PowerUpType {
 
   static PowerUpType fromString(String value) {
     switch (value) {
-      case 'teleporter': return PowerUpType.teleporter;
-      case 'iceTile': return PowerUpType.iceTile;
-      case 'lock': return PowerUpType.lock;
-      case 'key': return PowerUpType.key;
-      case 'movingObstacle': return PowerUpType.movingObstacle;
-      case 'switch': return PowerUpType.switchToggle;
-      case 'portal': return PowerUpType.portal;
-      case 'oneWayGate': return PowerUpType.oneWayGate;
-      default: return PowerUpType.teleporter;
+      case 'teleporter':
+        return PowerUpType.teleporter;
+      case 'iceTile':
+        return PowerUpType.iceTile;
+      case 'lock':
+        return PowerUpType.lock;
+      case 'key':
+        return PowerUpType.key;
+      case 'movingObstacle':
+        return PowerUpType.movingObstacle;
+      case 'switch':
+        return PowerUpType.switchToggle;
+      case 'portal':
+        return PowerUpType.portal;
+      case 'oneWayGate':
+        return PowerUpType.oneWayGate;
+      default:
+        return PowerUpType.teleporter;
     }
   }
 }

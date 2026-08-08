@@ -31,8 +31,10 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
             children: [
               // Top Bar
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 child: Row(
                   children: [
                     AnimatedScaleButton(
@@ -43,8 +45,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  Colors.black.withValues(alpha: 0.06),
+                              color: Colors.black.withValues(alpha: 0.06),
                               blurRadius: 8,
                               offset: const Offset(0, 3),
                             ),
@@ -53,8 +54,11 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                         child: const SizedBox(
                           width: 44,
                           height: 44,
-                          child: Icon(Icons.arrow_back_ios_new_rounded,
-                              size: 20, color: GameConfig.textPrimary),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 20,
+                            color: GameConfig.textPrimary,
+                          ),
                         ),
                       ),
                     ),
@@ -79,17 +83,17 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
               // Chapter Tabs
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
                 child: Row(
-                  children:
-                      List.generate(GameConfig.chaptersCount, (index) {
+                  children: List.generate(GameConfig.chaptersCount, (index) {
                     final isSelected = index == _selectedChapter;
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: AnimatedScaleButton(
-                        onTap: () =>
-                            setState(() => _selectedChapter = index),
+                        onTap: () => setState(() => _selectedChapter = index),
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: isSelected
@@ -98,8 +102,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black
-                                    .withValues(alpha: 0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),
@@ -107,12 +110,13 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             child: Row(
                               children: [
                                 Text(
-                                  GameConfig.chapterNames[index]
-                                      .toUpperCase(),
+                                  GameConfig.chapterNames[index].toUpperCase(),
                                   style: TextStyle(
                                     color: isSelected
                                         ? Colors.white
@@ -166,19 +170,18 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                           physics: const BouncingScrollPhysics(),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 0.85,
-                          ),
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio: 0.85,
+                              ),
                           itemCount: GameConfig.levelsPerChapter,
                           itemBuilder: (context, index) {
-                            final levelId =
-                                (_selectedChapter * 50) + index + 1;
-                            final isUnlocked =
-                                userData.isLevelUnlocked(levelId);
-                            final stars =
-                                userData.starRatings[levelId] ?? 0;
+                            final levelId = (_selectedChapter * 50) + index + 1;
+                            final isUnlocked = userData.isLevelUnlocked(
+                              levelId,
+                            );
+                            final stars = userData.starRatings[levelId] ?? 0;
                             final isCurrent =
                                 levelId == userData.currentProgress + 1;
 
@@ -199,8 +202,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: List.generate(5, (dot) {
                           return Container(
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 3),
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
                             width: dot == 0 ? 8 : 6,
                             height: dot == 0 ? 8 : 6,
                             decoration: BoxDecoration(
@@ -254,8 +256,7 @@ class _LockedLevelTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          const Icon(Icons.lock_rounded,
-              size: 16, color: GameConfig.textMuted),
+          const Icon(Icons.lock_rounded, size: 16, color: GameConfig.textMuted),
         ],
       ),
     );
@@ -277,11 +278,7 @@ class _UnlockedLevelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedScaleButton(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          AppRouter.gameplay,
-          arguments: levelId,
-        );
+        Navigator.pushNamed(context, AppRouter.gameplay, arguments: levelId);
       },
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -298,8 +295,7 @@ class _UnlockedLevelTile extends StatelessWidget {
               offset: const Offset(0, 3),
             ),
           ],
-          border:
-              isCurrent ? Border.all(color: Colors.white, width: 2) : null,
+          border: isCurrent ? Border.all(color: Colors.white, width: 2) : null,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -320,9 +316,7 @@ class _UnlockedLevelTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(3, (s) {
                   return Icon(
-                    s < stars
-                        ? Icons.star_rounded
-                        : Icons.star_border_rounded,
+                    s < stars ? Icons.star_rounded : Icons.star_border_rounded,
                     size: 10,
                     color: GameConfig.accent,
                   );

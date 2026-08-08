@@ -40,8 +40,7 @@ class _NoInternetScreenState extends State<NoInternetScreen>
 
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
-      final hasInternet =
-          !connectivityResult.contains(ConnectivityResult.none);
+      final hasInternet = !connectivityResult.contains(ConnectivityResult.none);
 
       if (hasInternet) {
         await AdService.instance.init();
@@ -78,7 +77,8 @@ class _NoInternetScreenState extends State<NoInternetScreen>
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: GameConfig.spacingXl),
+              horizontal: GameConfig.spacingXl,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -96,8 +96,9 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                       color: GameConfig.error.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(
-                          color: GameConfig.error.withValues(alpha: 0.3),
-                          width: 1.5),
+                        color: GameConfig.error.withValues(alpha: 0.3),
+                        width: 1.5,
+                      ),
                     ),
                     child: const SizedBox(
                       width: 120,
@@ -114,8 +115,8 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                 Text(
                   'No Internet',
                   style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: GameConfig.spacingMd),
                 Text(
@@ -123,10 +124,10 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                   'Please check your connection and try again.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: GameConfig.textMuted,
-                        height: 1.5,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: GameConfig.textMuted,
+                    height: 1.5,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: GameConfig.spacingXxl),
                 AnimatedScaleButton(
@@ -159,8 +160,11 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                             : const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.refresh_rounded,
-                                      size: 24, color: Colors.white),
+                                  Icon(
+                                    Icons.refresh_rounded,
+                                    size: 24,
+                                    color: Colors.white,
+                                  ),
                                   SizedBox(width: 8),
                                   Text(
                                     'RETRY',

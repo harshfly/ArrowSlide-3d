@@ -22,7 +22,9 @@ class PauseScreen extends StatelessWidget {
 
           Center(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: GameConfig.spacingXl),
+              padding: const EdgeInsets.symmetric(
+                horizontal: GameConfig.spacingXl,
+              ),
               child: Container(
                 padding: const EdgeInsets.all(GameConfig.spacingLg),
                 decoration: BoxDecoration(
@@ -134,7 +136,7 @@ class PauseScreen extends StatelessWidget {
               color: color.withValues(alpha: 0.4),
               blurRadius: 12,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Row(

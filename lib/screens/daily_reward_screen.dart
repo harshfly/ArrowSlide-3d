@@ -30,9 +30,10 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
       duration: const Duration(milliseconds: 1800),
     )..repeat(reverse: true);
 
-    _pulseAnimation = Tween<double>(begin: 0.96, end: 1.04).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _pulseAnimation = Tween<double>(
+      begin: 0.96,
+      end: 1.04,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
@@ -66,11 +67,12 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                           color: GameConfig.surface,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                              color: GameConfig.surfaceLight, width: 1.5),
+                            color: GameConfig.surfaceLight,
+                            width: 1.5,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  Colors.black.withValues(alpha: 0.15),
+                              color: Colors.black.withValues(alpha: 0.15),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -79,8 +81,11 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                         child: const SizedBox(
                           width: 44,
                           height: 44,
-                          child: Icon(Icons.arrow_back_rounded,
-                              color: GameConfig.textPrimary, size: 22),
+                          child: Icon(
+                            Icons.arrow_back_rounded,
+                            color: GameConfig.textPrimary,
+                            size: 22,
+                          ),
                         ),
                       ),
                     ),
@@ -90,16 +95,23 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                         color: GameConfig.danger.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                            color: GameConfig.danger, width: 1.5),
+                          color: GameConfig.danger,
+                          width: 1.5,
+                        ),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 6),
+                          horizontal: 14,
+                          vertical: 6,
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.whatshot_rounded,
-                                color: GameConfig.danger, size: 18),
+                            const Icon(
+                              Icons.whatshot_rounded,
+                              color: GameConfig.danger,
+                              size: 18,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               'DAY #${DailyChallengeService.getTodaySeed()}',
@@ -122,7 +134,9 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 12.0),
+                    horizontal: 24.0,
+                    vertical: 12.0,
+                  ),
                   child: Column(
                     children: [
                       const SizedBox(height: 16),
@@ -132,18 +146,16 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                         child: DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [
-                                GameConfig.warning,
-                                GameConfig.danger
-                              ],
+                              colors: [GameConfig.warning, GameConfig.danger],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: GameConfig.danger
-                                    .withValues(alpha: 0.35),
+                                color: GameConfig.danger.withValues(
+                                  alpha: 0.35,
+                                ),
                                 blurRadius: 25,
                                 offset: const Offset(0, 10),
                               ),
@@ -191,12 +203,13 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
                           child: Text(
                             'Next new puzzle in: ${DailyChallengeService.getTimeUntilNextChallenge()}',
                             style: TextStyle(
-                              color:
-                                  Colors.white.withValues(alpha: 0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -213,11 +226,12 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                           color: GameConfig.surface,
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                              color: GameConfig.surfaceLight, width: 2),
+                            color: GameConfig.surfaceLight,
+                            width: 2,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  Colors.black.withValues(alpha: 0.15),
+                              color: Colors.black.withValues(alpha: 0.15),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -232,11 +246,11 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                               value: '7 x 7 Advanced Grid',
                             ),
                             const Padding(
-                              padding:
-                                  EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 12),
                               child: Divider(
-                                  color: GameConfig.surfaceLight,
-                                  thickness: 1.5),
+                                color: GameConfig.surfaceLight,
+                                thickness: 1.5,
+                              ),
                             ),
                             _buildDetailRow(
                               icon: Icons.shield_rounded,
@@ -245,11 +259,11 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                               value: 'Expert / Higher Side',
                             ),
                             const Padding(
-                              padding:
-                                  EdgeInsets.symmetric(vertical: 12),
+                              padding: EdgeInsets.symmetric(vertical: 12),
                               child: Divider(
-                                  color: GameConfig.surfaceLight,
-                                  thickness: 1.5),
+                                color: GameConfig.surfaceLight,
+                                thickness: 1.5,
+                              ),
                             ),
                             _buildDetailRow(
                               icon: Icons.timer_rounded,
@@ -284,8 +298,11 @@ class _DailyRewardScreenState extends State<DailyRewardScreen>
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.play_arrow_rounded,
-                          color: Colors.white, size: 30),
+                      Icon(
+                        Icons.play_arrow_rounded,
+                        color: Colors.white,
+                        size: 30,
+                      ),
                       SizedBox(width: 10),
                       Text(
                         'START CHALLENGE',

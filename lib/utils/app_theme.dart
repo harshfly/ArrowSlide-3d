@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../config.dart';
 
 /// AppTheme — Material 3 theme configuration for ArrowSlide 3D.
+///
+/// Uses system default sans-serif font to avoid bundling or downloading
+/// external font files, reducing APK size.
 class AppTheme {
   AppTheme._();
 
-  static ThemeData get darkTheme {
-    final baseTextTheme = Typography.material2021().white;
+  static const _fontFamily = 'sans-serif';
 
+  static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: GameConfig.backgroundDark,
+      fontFamily: _fontFamily,
       colorScheme: const ColorScheme.dark(
         primary: GameConfig.primary,
         secondary: GameConfig.secondary,
@@ -39,42 +42,41 @@ class AppTheme {
       ),
 
       // Text Theme
-      textTheme: GoogleFonts.nunitoSansTextTheme(baseTextTheme).copyWith(
-        displayLarge: GoogleFonts.nunitoSans(
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
           color: GameConfig.textColor,
           fontSize: 32,
           fontWeight: FontWeight.w900,
           letterSpacing: 2,
         ),
-        displayMedium: GoogleFonts.nunitoSans(
+        displayMedium: TextStyle(
           color: GameConfig.textColor,
           fontSize: 26,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.5,
         ),
-        headlineLarge: GoogleFonts.nunitoSans(
+        headlineLarge: TextStyle(
           color: GameConfig.textColor,
           fontSize: 22,
           fontWeight: FontWeight.w800,
           letterSpacing: 1,
         ),
-        headlineMedium: GoogleFonts.nunitoSans(
+        headlineMedium: TextStyle(
           color: GameConfig.textColor,
           fontSize: 18,
           fontWeight: FontWeight.w700,
         ),
-        titleLarge: GoogleFonts.nunitoSans(
+        titleLarge: TextStyle(
           color: GameConfig.textColor,
           fontSize: 16,
           fontWeight: FontWeight.w700,
         ),
-        bodyLarge: GoogleFonts.nunitoSans(
+        bodyLarge: TextStyle(color: GameConfig.textColor, fontSize: 14),
+        bodyMedium: TextStyle(color: GameConfig.textMuted, fontSize: 12),
+        labelMedium: TextStyle(
           color: GameConfig.textColor,
-          fontSize: 14,
-        ),
-        bodyMedium: GoogleFonts.nunitoSans(
-          color: GameConfig.textMuted,
           fontSize: 12,
+          fontWeight: FontWeight.w600,
         ),
       ),
 
@@ -89,7 +91,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: GoogleFonts.nunitoSans(
+          textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
             letterSpacing: 1,
@@ -105,10 +107,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: GoogleFonts.nunitoSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          ),
+          textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
         ),
       ),
     );

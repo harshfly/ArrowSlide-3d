@@ -126,7 +126,10 @@ class GameEngine extends ChangeNotifier {
     while (true) {
       cx += dx;
       cy += dy;
-      if (cx < 0 || cx >= _level.gridWidth || cy < 0 || cy >= _level.gridHeight) {
+      if (cx < 0 ||
+          cx >= _level.gridWidth ||
+          cy < 0 ||
+          cy >= _level.gridHeight) {
         // Path is completely clear — set target outside the board for animation.
         int farX = block.x;
         int farY = block.y;
@@ -250,11 +253,13 @@ class GameEngine extends ChangeNotifier {
   // ─── Undo & Restart ───────────────────────────────────────────
 
   void _pushUndo() {
-    _undoStack.add(_UndoState(
-      blocks: _blocks.map((b) => b.copyWith()).toList(),
-      score: _score,
-      timeRemaining: _timeRemaining,
-    ));
+    _undoStack.add(
+      _UndoState(
+        blocks: _blocks.map((b) => b.copyWith()).toList(),
+        score: _score,
+        timeRemaining: _timeRemaining,
+      ),
+    );
     if (_undoStack.length > GameConfig.maxUndos) {
       _undoStack.removeAt(0);
     }

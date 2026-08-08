@@ -54,9 +54,9 @@ class HudWidget extends StatelessWidget {
             Text(
               'LEVEL $levelId',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                  ),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1,
+              ),
             ),
 
             const Spacer(),
@@ -68,18 +68,21 @@ class HudWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(GameConfig.radiusSm),
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       '$moveCount',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: moveCount <= parMoves
-                                ? GameConfig.success
-                                : GameConfig.warning,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        color: moveCount <= parMoves
+                            ? GameConfig.success
+                            : GameConfig.warning,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     Text(
                       ' / $parMoves',

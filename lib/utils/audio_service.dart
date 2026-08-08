@@ -35,7 +35,8 @@ class AudioService {
       _initialized = true;
     } catch (e) {
       _debugLog('AudioService init error: $e');
-      _initialized = true; // Mark initialized anyway, will use SystemSound fallback
+      _initialized =
+          true; // Mark initialized anyway, will use SystemSound fallback
     }
   }
 

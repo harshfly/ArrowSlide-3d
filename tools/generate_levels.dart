@@ -29,28 +29,30 @@ void main() {
   for (int i = 1; i <= 200; i++) {
     _generateLevel(i);
   }
-  stdout.writeln('✓ Generated 200 ArrowSlide 3D levels with neuroscience-based difficulty!');
+  stdout.writeln(
+    '✓ Generated 200 ArrowSlide 3D levels with neuroscience-based difficulty!',
+  );
 }
 
 void _generateLevel(int id) {
   // ─── Grid Size Progression ────────────────────────────────────
   int size;
   if (id <= 3) {
-    size = 3;          // Tutorial: tiny grid
+    size = 3; // Tutorial: tiny grid
   } else if (id <= 10) {
-    size = 4;          // Early easy: small grid
+    size = 4; // Early easy: small grid
   } else if (id <= 25) {
-    size = 5;          // Easy: medium grid
+    size = 5; // Easy: medium grid
   } else if (id <= 50) {
-    size = 6;          // Easy-medium transition
+    size = 6; // Easy-medium transition
   } else if (id <= 80) {
-    size = 7;          // Medium: large grid
+    size = 7; // Medium: large grid
   } else if (id <= 120) {
-    size = 8;          // Hard: bigger grid
+    size = 8; // Hard: bigger grid
   } else if (id <= 170) {
-    size = 9;          // Expert: very large
+    size = 9; // Expert: very large
   } else {
-    size = 10;         // Master: maximum grid
+    size = 10; // Master: maximum grid
   }
 
   // ─── Block Count Progression (Neuroscience: gradual ramp) ─────
@@ -144,31 +146,47 @@ void _generateLevel(int id) {
   } else if (id <= 25) {
     // Easy: comfortable
     final secsPerBlock = 8.0 - ((id - 6) / 19.0) * 2.0; // 8s → 6s per block
-    timeLimitSeconds = (targetBlocks * secsPerBlock + 20).round().clamp(45, 120);
+    timeLimitSeconds = (targetBlocks * secsPerBlock + 20).round().clamp(
+      45,
+      120,
+    );
     threeStarSec = (timeLimitSeconds * 0.3).round();
     twoStarSec = (timeLimitSeconds * 0.6).round();
   } else if (id <= 50) {
     // Easy-Medium: moderate
     final secsPerBlock = 6.0 - ((id - 26) / 24.0) * 1.5; // 6s → 4.5s per block
-    timeLimitSeconds = (targetBlocks * secsPerBlock + 15).round().clamp(60, 150);
+    timeLimitSeconds = (targetBlocks * secsPerBlock + 15).round().clamp(
+      60,
+      150,
+    );
     threeStarSec = (timeLimitSeconds * 0.28).round();
     twoStarSec = (timeLimitSeconds * 0.55).round();
   } else if (id <= 100) {
     // Medium: tighter
     final secsPerBlock = 5.0 - ((id - 51) / 49.0) * 1.0; // 5s → 4s per block
-    timeLimitSeconds = (targetBlocks * secsPerBlock + 15).round().clamp(90, 200);
+    timeLimitSeconds = (targetBlocks * secsPerBlock + 15).round().clamp(
+      90,
+      200,
+    );
     threeStarSec = (timeLimitSeconds * 0.25).round();
     twoStarSec = (timeLimitSeconds * 0.5).round();
   } else if (id <= 150) {
     // Hard: challenging
     final secsPerBlock = 4.0 - ((id - 101) / 49.0) * 0.8; // 4s → 3.2s per block
-    timeLimitSeconds = (targetBlocks * secsPerBlock + 20).round().clamp(120, 280);
+    timeLimitSeconds = (targetBlocks * secsPerBlock + 20).round().clamp(
+      120,
+      280,
+    );
     threeStarSec = (timeLimitSeconds * 0.22).round();
     twoStarSec = (timeLimitSeconds * 0.45).round();
   } else {
     // Expert: tight but fair
-    final secsPerBlock = 3.5 - ((id - 151) / 49.0) * 0.7; // 3.5s → 2.8s per block
-    timeLimitSeconds = (targetBlocks * secsPerBlock + 25).round().clamp(150, 360);
+    final secsPerBlock =
+        3.5 - ((id - 151) / 49.0) * 0.7; // 3.5s → 2.8s per block
+    timeLimitSeconds = (targetBlocks * secsPerBlock + 25).round().clamp(
+      150,
+      360,
+    );
     threeStarSec = (timeLimitSeconds * 0.2).round();
     twoStarSec = (timeLimitSeconds * 0.42).round();
   }

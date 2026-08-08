@@ -26,16 +26,23 @@ class AboutScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: GameConfig.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: GameConfig.surfaceLight, width: 1.5),
+                        border: Border.all(
+                          color: GameConfig.surfaceLight,
+                          width: 1.5,
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 6,
                             offset: const Offset(0, 3),
-                          )
+                          ),
                         ],
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: GameConfig.textColor),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 20,
+                        color: GameConfig.textColor,
+                      ),
                     ),
                   ),
                   const SizedBox(width: GameConfig.spacingMd),
@@ -79,13 +86,16 @@ class AboutScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: GameConfig.surface,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: GameConfig.surfaceLight, width: 1.5),
+                          border: Border.all(
+                            color: GameConfig.surfaceLight,
+                            width: 1.5,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.2),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
-                            )
+                            ),
                           ],
                         ),
                         child: Column(
@@ -93,22 +103,28 @@ class AboutScreen extends StatelessWidget {
                             Text(
                               GameConfig.gameDescription,
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                height: 1.5,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge
+                                  ?.copyWith(
+                                    height: 1.5,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                             const SizedBox(height: GameConfig.spacingMd),
-                            const Divider(color: GameConfig.surfaceLight, thickness: 1.5),
+                            const Divider(
+                              color: GameConfig.surfaceLight,
+                              thickness: 1.5,
+                            ),
                             const SizedBox(height: GameConfig.spacingMd),
                             Text(
                               'Developed with ❤️ using Flutter',
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               GameConfig.copyright,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: GameConfig.textMuted),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: GameConfig.textMuted),
                             ),
                           ],
                         ),
@@ -127,11 +143,15 @@ class AboutScreen extends StatelessWidget {
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: const Text('Thank you for your support! ⭐'),
+                                    content: const Text(
+                                      'Thank you for your support! ⭐',
+                                    ),
                                     backgroundColor: GameConfig.surface,
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(GameConfig.radiusSm),
+                                      borderRadius: BorderRadius.circular(
+                                        GameConfig.radiusSm,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -148,11 +168,15 @@ class AboutScreen extends StatelessWidget {
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: const Text('Share feature coming soon!'),
+                                    content: const Text(
+                                      'Share feature coming soon!',
+                                    ),
                                     backgroundColor: GameConfig.surface,
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(GameConfig.radiusSm),
+                                      borderRadius: BorderRadius.circular(
+                                        GameConfig.radiusSm,
+                                      ),
                                     ),
                                   ),
                                 );
@@ -171,8 +195,6 @@ class AboutScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildActionCard(
     BuildContext context, {

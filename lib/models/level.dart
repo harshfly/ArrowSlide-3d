@@ -10,7 +10,7 @@ class Level {
   final int parMoves;
   final int timeLimitSeconds;
   final int threeStarSec; // Complete within this many seconds → 3 stars
-  final int twoStarSec;   // Complete within this many seconds → 2 stars
+  final int twoStarSec; // Complete within this many seconds → 2 stars
   final String difficulty;
   final List<Tile> tiles;
   final List<ArrowBlock> blocks;
@@ -46,7 +46,8 @@ class Level {
       blocks: (json['blocks'] as List<dynamic>)
           .map((b) => ArrowBlock.fromJson(b as Map<String, dynamic>))
           .toList(),
-      powerUps: (json['powerUps'] as List<dynamic>?)
+      powerUps:
+          (json['powerUps'] as List<dynamic>?)
               ?.map((p) => PowerUp.fromJson(p as Map<String, dynamic>))
               .toList() ??
           [],
@@ -54,20 +55,21 @@ class Level {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'gridWidth': gridWidth,
-        'gridHeight': gridHeight,
-        'parMoves': parMoves,
-        'timeLimitSeconds': timeLimitSeconds,
-        'threeStarSec': threeStarSec,
-        'twoStarSec': twoStarSec,
-        'difficulty': difficulty,
-        'tiles': tiles.map((t) => t.toJson()).toList(),
-        'blocks': blocks.map((b) => b.toJson()).toList(),
-        'powerUps': powerUps.map((p) => p.toJson()).toList(),
-      };
+    'id': id,
+    'gridWidth': gridWidth,
+    'gridHeight': gridHeight,
+    'parMoves': parMoves,
+    'timeLimitSeconds': timeLimitSeconds,
+    'threeStarSec': threeStarSec,
+    'twoStarSec': twoStarSec,
+    'difficulty': difficulty,
+    'tiles': tiles.map((t) => t.toJson()).toList(),
+    'blocks': blocks.map((b) => b.toJson()).toList(),
+    'powerUps': powerUps.map((p) => p.toJson()).toList(),
+  };
 
-  List<Tile> get exitTiles => tiles.where((t) => t.type == TileType.exit).toList();
+  List<Tile> get exitTiles =>
+      tiles.where((t) => t.type == TileType.exit).toList();
 
   ArrowBlock? get playerBlock {
     try {

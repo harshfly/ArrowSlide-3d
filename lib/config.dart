@@ -21,13 +21,16 @@ class GameConfig {
   // ─── AdMob IDs ──────────────────────────────
   static const String admobAppId = 'ca-app-pub-1400546699902881~2119770564';
   static const String bannerAdId = 'ca-app-pub-1400546699902881/5049186235';
-  static const String interstitialAdId = 'ca-app-pub-1400546699902881/1246652539';
+  static const String interstitialAdId =
+      'ca-app-pub-1400546699902881/1246652539';
   static const String rewardedAdId = 'ca-app-pub-1400546699902881/4203217857';
 
   // ─── Ad Behavior ──────────────────────────────────────────────────────
-  static const int interstitialFrequency = 3;  // Show interstitial every N completed levels
-  static const int retryAdFrequency = 2;       // Show interstitial every N retries
-  static const bool hintRequiresAd = true;     // Hints ONLY available after watching rewarded ad
+  static const int interstitialFrequency =
+      6; // Show interstitial every N completed levels
+  static const int retryAdFrequency = 2; // Show interstitial every N retries
+  static const bool hintRequiresAd =
+      true; // Hints ONLY available after watching rewarded ad
   static const bool showBannerOnHome = true;
   static const bool showBannerOnLevelSelect = true;
   static const bool showBannerOnGameplay = false;
@@ -37,8 +40,18 @@ class GameConfig {
   static const int totalLevels = 200;
   static const int levelsPerChapter = 50;
   static const int chaptersCount = 4;
-  static const List<String> chapterNames = ['The Basics', 'Intermediate', 'Advanced', 'Expert'];
-  static const List<String> difficultyLabels = ['Easy', 'Medium', 'Hard', 'Expert'];
+  static const List<String> chapterNames = [
+    'The Basics',
+    'Intermediate',
+    'Advanced',
+    'Expert',
+  ];
+  static const List<String> difficultyLabels = [
+    'Easy',
+    'Medium',
+    'Hard',
+    'Expert',
+  ];
   static const int initialUnlockedLevels = 1;
 
   // Background & Grid
@@ -49,30 +62,34 @@ class GameConfig {
 
   // Surface & Cards
   static const Color surface = Colors.white;
-  static const Color cardColor = Colors.white; 
+  static const Color cardColor = Colors.white;
   static const Color gridColor = Colors.transparent;
   static const Color surfaceLight = Colors.white;
 
   // ─── Brand Palette (Exact Claymorphism Tokens) ────────────────────────────────────────
-  static const Color primary = Color(0xFF1E65F3);       // Play Blue (Deep Logo Royal Blue)
-  static const Color primaryDepth = Color(0xFF0C46BC);  
-  
-  static const Color secondary = Color(0xFF0EBA6F);     // Green (Deep Emerald Green)
+  static const Color primary = Color(
+    0xFF1E65F3,
+  ); // Play Blue (Deep Logo Royal Blue)
+  static const Color primaryDepth = Color(0xFF0C46BC);
+
+  static const Color secondary = Color(
+    0xFF0EBA6F,
+  ); // Green (Deep Emerald Green)
   static const Color secondaryDepth = Color(0xFF07824B);
-  
-  static const Color accent = Color(0xFFED8A00);        // Orange (Deep Vibrant Orange)
-  static const Color accentDepth = Color(0xFFAB6000);   
-  
-  static const Color danger = Color(0xFFE83D58);        // Coral (Deep Crimson Coral)
-  static const Color dangerDepth = Color(0xFFA61F35);   
+
+  static const Color accent = Color(0xFFED8A00); // Orange (Deep Vibrant Orange)
+  static const Color accentDepth = Color(0xFFAB6000);
+
+  static const Color danger = Color(0xFFE83D58); // Coral (Deep Crimson Coral)
+  static const Color dangerDepth = Color(0xFFA61F35);
 
   static const Color error = Color(0xFFE83D58);
   static const Color orange = Color(0xFFED8A00);
-  static const Color purple = Color(0xFF9623E0);        
+  static const Color purple = Color(0xFF9623E0);
   static const Color purpleDepth = Color(0xFF67109E);
 
   // Text Colors
-  static const Color textPrimary = Color(0xFF1F2430);      
+  static const Color textPrimary = Color(0xFF1F2430);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color textColor = Color(0xFF1F2430);
   static const Color textMuted = Color(0xFFC7C7C7); // Disabled
@@ -80,25 +97,25 @@ class GameConfig {
   // Status & Rewards
   static const Color warning = accent;
   static const Color success = secondary;
-  static const Color coinsColor = accent;       
-  static const Color starsColor = accent;       
+  static const Color coinsColor = accent;
+  static const Color starsColor = accent;
 
   // ─── Arrow Cube Color Palette ──────────────────────────────────────────
   static const Color cubeBlue = Color(0xFF1E65F3);
   static const Color cubeBlueSide = Color(0xFF0C46BC);
-  
+
   static const Color cubeRed = Color(0xFFE83D58);
   static const Color cubeRedSide = Color(0xFFA61F35);
-  
+
   static const Color cubeGreen = Color(0xFF0EBA6F);
   static const Color cubeGreenSide = Color(0xFF07824B);
-  
+
   static const Color cubeYellow = Color(0xFFED8A00);
   static const Color cubeYellowSide = Color(0xFFAB6000);
-  
+
   static const Color cubePurple = purple;
   static const Color cubePurpleSide = purpleDepth;
-  
+
   static const Color cubeOrange = accent;
   static const Color cubeOrangeSide = accentDepth;
 
@@ -185,8 +202,8 @@ class GameConfig {
   static const double spacingXxl = 48.0;
 
   static const double radiusSm = 12.0;
-  static const double radiusMd = 16.0; 
-  static const double radiusLg = 24.0; 
+  static const double radiusMd = 16.0;
+  static const double radiusLg = 24.0;
   static const double radiusXl = 28.0;
 
   static const double blockSizeRatio = 0.88;

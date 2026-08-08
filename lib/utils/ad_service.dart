@@ -90,10 +90,7 @@ class AdService {
         onAdFailedToLoad: (error) {
           _debugLog('Interstitial load failed: $error');
           _isInterstitialLoaded = false;
-          _retryWithBackoff(
-            _loadInterstitialAd,
-            _interstitialRetryCount++,
-          );
+          _retryWithBackoff(_loadInterstitialAd, _interstitialRetryCount++);
         },
       ),
     );
@@ -130,10 +127,7 @@ class AdService {
         onAdFailedToLoad: (error) {
           _debugLog('Rewarded load failed: $error');
           _isRewardedLoaded = false;
-          _retryWithBackoff(
-            _loadRewardedAd,
-            _rewardedRetryCount++,
-          );
+          _retryWithBackoff(_loadRewardedAd, _rewardedRetryCount++);
         },
       ),
     );
@@ -191,9 +185,7 @@ class AdService {
       _debugLog('Max ad retry count reached, stopping retries');
       return;
     }
-    final delay = Duration(
-      seconds: (30 * (1 << retryCount)).clamp(30, 300),
-    );
+    final delay = Duration(seconds: (30 * (1 << retryCount)).clamp(30, 300));
     Future.delayed(delay, loader);
   }
 
