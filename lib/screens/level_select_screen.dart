@@ -20,7 +20,7 @@ class _LevelSelectScreenState extends State<LevelSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final storage = Provider.of<StorageService>(context);
+    final storage = Provider.of<StorageService>(context, listen: false);
     final userData = storage.userData;
 
     return Scaffold(

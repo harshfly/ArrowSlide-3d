@@ -10,6 +10,11 @@ import '../config.dart';
 /// All mutations are applied to the in-memory [UserData] immediately,
 /// and a single debounced write flushes to disk after [_writeDebounceDuration].
 /// This prevents blocking the UI thread on every coin/level update.
+///
+/// UI notifications are separate from disk writes — only [_notifyUI] triggers
+/// widget rebuilds, and it is called only for mutations that change visible state
+/// (level progress, settings). Gameplay-only mutations (coins, hints during play)
+/// save to disk silently.
 class StorageService extends ChangeNotifier {
   static const String _userDataKey = 'arrowslide_user_data';
   static const Duration _writeDebounceDuration = Duration(milliseconds: 500);
@@ -58,11 +63,17 @@ class StorageService extends ChangeNotifier {
 
   UserData get userData => _userData;
 
-  /// Schedule a debounced write to disk.
+  /// Schedule a debounced write to disk. Does NOT notify UI.
   void _scheduleSave() {
     _isDirty = true;
     _writeTimer?.cancel();
     _writeTimer = Timer(_writeDebounceDuration, _flushToDisk);
+  }
+
+  /// Schedule a disk save AND notify the widget tree immediately.
+  /// Use this only for mutations that affect visible UI (level progress, settings).
+  void _scheduleSaveAndNotify() {
+    _scheduleSave();
     notifyListeners();
   }
 
@@ -85,7 +96,8 @@ class StorageService extends ChangeNotifier {
 
   Future<void> unlockLevel(int levelId) async {
     _userData.unlockedLevels.add(levelId);
-    _scheduleSave();
+    _userData.invalidateProgressCache();
+    _scheduleSaveAndNotify();
   }
 
   Future<void> completeLevel(int levelId, int moves, int stars) async {
@@ -113,7 +125,9 @@ class StorageService extends ChangeNotifier {
     // Track completed levels count for interstitial ads
     _userData.completedLevelsCount++;
 
-    _scheduleSave();
+    // Invalidate progress cache since levels changed
+    _userData.invalidateProgressCache();
+    _scheduleSaveAndNotify();
   }
 
   /// Returns total coins earned from level completion.
@@ -124,30 +138,30 @@ class StorageService extends ChangeNotifier {
 
   Future<void> addCoins(int amount) async {
     _userData.coins += amount;
-    _scheduleSave();
+    _scheduleSave(); // Silent — no UI rebuild needed during gameplay
   }
 
   Future<void> spendCoins(int amount) async {
     _userData.coins = (_userData.coins - amount).clamp(0, 999999);
-    _scheduleSave();
+    _scheduleSave(); // Silent
   }
 
   Future<void> addHint() async {
     _userData.hints++;
-    _scheduleSave();
+    _scheduleSave(); // Silent
   }
 
   Future<void> useHint() async {
     if (_userData.hints > 0) {
       _userData.hints--;
-      _scheduleSave();
+      _scheduleSave(); // Silent
     }
   }
 
   /// Claim daily reward. Returns the reward details.
   Future<Map<String, dynamic>> claimDailyReward() async {
     final reward = _userData.claimDailyReward();
-    _scheduleSave();
+    _scheduleSaveAndNotify(); // Visible state change
     return reward;
   }
 
@@ -169,7 +183,7 @@ class StorageService extends ChangeNotifier {
       dailyRewardDay: _userData.dailyRewardDay,
       lastDailyRewardDate: _userData.lastDailyRewardDate,
     );
-    _scheduleSave();
+    _scheduleSaveAndNotify(); // Visible state change (icons toggle)
   }
 
   Future<void> resetProgress() async {
@@ -179,8 +193,10 @@ class StorageService extends ChangeNotifier {
   }
 
   /// Cancel pending timers when the service is no longer needed.
+  @override
   void dispose() {
     _writeTimer?.cancel();
+    super.dispose();
   }
 
   static void _debugLog(String message) {

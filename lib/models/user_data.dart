@@ -14,6 +14,9 @@ class UserData {
   int dailyRewardDay; // 0-6 cycle index
   String lastDailyRewardDate; // ISO8601 date string
 
+  // Cached progress value — avoids recalculating on every widget rebuild.
+  int _cachedProgress = -1;
+
   UserData({
     Set<int>? unlockedLevels,
     Map<int, int>? bestMoves,
@@ -43,18 +46,28 @@ class UserData {
   int totalStars() => starRatings.values.fold(0, (sum, s) => sum + s);
 
   /// Returns the highest completed level ID based on both unlocked levels and star ratings.
-  /// This ensures compatibility with legacy saves where unlockedLevels might not be fully synced.
+  /// Uses an internal cache so the expensive iteration only runs once per data change.
   int get currentProgress {
+    if (_cachedProgress >= 0) return _cachedProgress;
+    _cachedProgress = _computeProgress();
+    return _cachedProgress;
+  }
+
+  /// Call this when unlockedLevels or starRatings change so the next
+  /// [currentProgress] read recomputes.
+  void invalidateProgressCache() {
+    _cachedProgress = -1;
+  }
+
+  int _computeProgress() {
     int maxUnlocked = 1;
-    final normalUnlocked = unlockedLevels.where((id) => id != 999);
-    if (normalUnlocked.isNotEmpty) {
-      maxUnlocked = normalUnlocked.reduce((a, b) => a > b ? a : b);
+    for (final id in unlockedLevels) {
+      if (id != 999 && id > maxUnlocked) maxUnlocked = id;
     }
 
     int maxStar = 0;
-    final normalStars = starRatings.keys.where((id) => id != 999);
-    if (normalStars.isNotEmpty) {
-      maxStar = normalStars.reduce((a, b) => a > b ? a : b);
+    for (final id in starRatings.keys) {
+      if (id != 999 && id > maxStar) maxStar = id;
     }
 
     final progressFromUnlocked = maxUnlocked - 1;
