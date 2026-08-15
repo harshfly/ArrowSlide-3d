@@ -10,7 +10,7 @@ import '../config.dart';
 /// All mutations are applied to the in-memory [UserData] immediately,
 /// and a single debounced write flushes to disk after [_writeDebounceDuration].
 /// This prevents blocking the UI thread on every coin/level update.
-class StorageService {
+class StorageService extends ChangeNotifier {
   static const String _userDataKey = 'arrowslide_user_data';
   static const Duration _writeDebounceDuration = Duration(milliseconds: 500);
 
@@ -63,6 +63,7 @@ class StorageService {
     _isDirty = true;
     _writeTimer?.cancel();
     _writeTimer = Timer(_writeDebounceDuration, _flushToDisk);
+    notifyListeners();
   }
 
   /// Force an immediate save (e.g., before app goes to background).
@@ -174,6 +175,7 @@ class StorageService {
   Future<void> resetProgress() async {
     _userData = UserData();
     await saveUserData(); // Immediate write for destructive action
+    notifyListeners();
   }
 
   /// Cancel pending timers when the service is no longer needed.

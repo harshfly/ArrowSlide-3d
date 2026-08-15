@@ -43,7 +43,7 @@ void main() async {
   }
 
   runApp(
-    Provider<StorageService>.value(
+    ChangeNotifierProvider<StorageService>.value(
       value: storageService,
       child: const ArrowSlideApp(),
     ),

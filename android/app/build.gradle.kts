@@ -23,9 +23,18 @@ android {
         multiDexEnabled = true
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("upload-keystore.jks")
+            storePassword = "arrowslide123"
+            keyAlias = "upload"
+            keyPassword = "arrowslide123"
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
             // Enable R8 shrinking and optimization for smaller APK
             isMinifyEnabled = true
             isShrinkResources = true
